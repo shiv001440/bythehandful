@@ -81,57 +81,164 @@ function OrdersPage() {
             </p>
           )}
 
-          <div className="mt-10 space-y-6">
-            {data?.map((o) => (
-              <article key={o.id} className="border border-black/10 p-6">
-                <div className="flex flex-wrap items-baseline justify-between gap-2">
-                  <div>
-                    <p className="text-[10px] tracking-[0.25em] uppercase text-foreground/50">
-                      {o.order_number}
-                    </p>
-                    <p className="font-serif text-2xl italic">{fmt(o.total_amount)}</p>
+          <div className="mt-10 space-y-8">
+            {data?.map((o) => {
+              const subtotal =
+                o.subtotal_amount ||
+                o.order_items?.reduce((sum, it) => sum + it.line_total, 0) ||
+                o.total_amount;
+              const shipping = o.shipping_amount ?? Math.max(0, o.total_amount - subtotal);
+              const totalItemsCount =
+                o.order_items?.reduce((sum, it) => sum + it.quantity, 0) ||
+                o.order_items?.length ||
+                0;
+
+              return (
+                <article
+                  key={o.id}
+                  className="border border-black/10 bg-background p-6 md:p-8 shadow-2xs"
+                >
+                  {/* Top Bar */}
+                  <div className="flex flex-wrap items-baseline justify-between gap-3 border-b border-black/10 pb-4">
+                    <div>
+                      <span className="text-[10px] tracking-[0.25em] uppercase text-foreground/50 font-bold block">
+                        Order Number
+                      </span>
+                      <p className="font-mono text-sm font-semibold tracking-wider text-foreground">
+                        {o.order_number}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-4 text-right">
+                      <div>
+                        <span className="text-[10px] tracking-[0.25em] uppercase text-foreground/50 block">
+                          Date Placed
+                        </span>
+                        <span className="text-xs text-foreground/70 font-medium">
+                          {new Date(o.created_at).toLocaleDateString("en-IN", {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                          })}
+                        </span>
+                      </div>
+                      <div className="pl-4 border-l border-black/10">
+                        <span
+                          className={`inline-flex items-center px-2.5 py-1 text-[10px] uppercase tracking-wider font-bold ${
+                            o.payment_status === "paid"
+                              ? "bg-emerald-50 text-emerald-800 border border-emerald-200"
+                              : o.payment_status === "failed"
+                                ? "bg-red-50 text-red-800 border border-red-200"
+                                : "bg-amber-50 text-amber-800 border border-amber-200"
+                          }`}
+                        >
+                          {o.payment_status === "paid"
+                            ? "Paid"
+                            : o.payment_status === "failed"
+                              ? "Failed"
+                              : "Pending"}{" "}
+                          · {o.status}
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                  <div className="text-right">
-                    <p className="text-[10px] tracking-[0.25em] uppercase text-foreground/50">
-                      {new Date(o.created_at).toLocaleDateString("en-IN")}
+
+                  {/* Line Items List */}
+                  <div className="py-2">
+                    <p className="text-[10px] tracking-[0.2em] uppercase text-foreground/50 font-bold pt-3 pb-1">
+                      Ordered Items ({totalItemsCount} {totalItemsCount === 1 ? "unit" : "units"})
                     </p>
-                    <p className="text-[11px] tracking-[0.2em] uppercase font-semibold">
-                      {o.payment_status === "paid"
-                        ? "Paid"
-                        : o.payment_status === "failed"
-                          ? "Payment failed"
-                          : "Awaiting payment"}{" "}
-                      · {o.status}
-                    </p>
+                    <ul className="divide-y divide-black/5">
+                      {o.order_items?.map((i) => {
+                        const itemImg = getProductImage(i.product_id, i.image_url, i.name);
+                        return (
+                          <li key={i.id} className="py-3.5 flex items-center gap-4">
+                            <img
+                              src={itemImg}
+                              alt={i.name}
+                              className="size-14 object-cover border border-black/10 shrink-0 bg-secondary"
+                              onError={(e) => {
+                                e.currentTarget.onerror = null;
+                                e.currentTarget.src = getProductImage("kaju");
+                              }}
+                            />
+                            <div className="flex-1 min-w-0">
+                              <p className="font-serif text-base truncate text-foreground">
+                                {i.name}
+                              </p>
+                              {i.origin && (
+                                <p className="text-[10px] tracking-[0.15em] uppercase text-foreground/50 truncate mt-0.5">
+                                  {i.origin}
+                                </p>
+                              )}
+                              <p className="text-xs text-foreground/60 mt-1">
+                                <span className="font-medium text-foreground">
+                                  Qty: {i.quantity}
+                                </span>
+                                {i.unit_amount > 0 && (
+                                  <span className="text-foreground/45 ml-2">
+                                    ({fmt(i.unit_amount)} each)
+                                  </span>
+                                )}
+                              </p>
+                            </div>
+                            <span className="text-sm font-serif font-semibold shrink-0">
+                              {fmt(i.line_total)}
+                            </span>
+                          </li>
+                        );
+                      })}
+                    </ul>
                   </div>
-                </div>
-                <ul className="mt-5 divide-y divide-black/5">
-                  {o.order_items?.map((i) => {
-                    const itemImg = getProductImage(i.product_id, i.image_url, i.name);
-                    return (
-                      <li key={i.id} className="py-3 flex items-center gap-3">
-                        <img
-                          src={itemImg}
-                          alt={i.name}
-                          className="size-12 object-cover border border-black/5 shrink-0"
-                          onError={(e) => {
-                            e.currentTarget.onerror = null;
-                            e.currentTarget.src = getProductImage("kaju");
-                          }}
-                        />
-                        <div className="flex-1 min-w-0">
-                          <p className="font-serif text-base truncate">{i.name}</p>
-                          <p className="text-[10px] tracking-[0.18em] uppercase text-foreground/50">
-                            Qty {i.quantity}
+
+                  {/* Bottom: Delivery Address & Full Price Breakup */}
+                  <div className="mt-4 pt-4 border-t border-black/10 grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+                    {/* Shipping Address */}
+                    <div className="text-xs text-foreground/70">
+                      {o.shipping_address_line1 || o.shipping_city || o.shipping_state ? (
+                        <>
+                          <p className="text-[10px] tracking-[0.2em] uppercase font-bold text-foreground/50 mb-1.5">
+                            Delivery Address
                           </p>
-                        </div>
-                        <span className="text-sm">{fmt(i.line_total)}</span>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </article>
-            ))}
+                          <p className="leading-relaxed">
+                            {o.shipping_address_line1 && (
+                              <span>
+                                {o.shipping_address_line1}
+                                <br />
+                              </span>
+                            )}
+                            {[o.shipping_city, o.shipping_state, o.shipping_postal_code]
+                              .filter(Boolean)
+                              .join(", ")}
+                            {o.shipping_country && <span>, {o.shipping_country}</span>}
+                          </p>
+                        </>
+                      ) : (
+                        <div />
+                      )}
+                    </div>
+
+                    {/* Price Breakup */}
+                    <div className="bg-black/[0.02] border border-black/5 p-4 space-y-2 text-xs">
+                      <p className="text-[10px] tracking-[0.2em] uppercase font-bold text-foreground/50 mb-2">
+                        Price Breakup
+                      </p>
+                      <div className="flex justify-between text-foreground/70">
+                        <span>Items Subtotal</span>
+                        <span>{fmt(subtotal)}</span>
+                      </div>
+                      <div className="flex justify-between text-foreground/70">
+                        <span>Delivery / Shipping</span>
+                        <span>{shipping > 0 ? fmt(shipping) : "Free"}</span>
+                      </div>
+                      <div className="pt-2 border-t border-black/10 flex justify-between items-baseline font-semibold text-foreground">
+                        <span className="text-xs uppercase tracking-wider">Total Amount</span>
+                        <span className="font-serif text-xl italic">{fmt(o.total_amount)}</span>
+                      </div>
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
           </div>
         </div>
       </main>
