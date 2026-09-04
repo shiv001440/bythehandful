@@ -5,6 +5,7 @@ import { createRazorpayOrder, verifyRazorpayPayment } from "@/lib/checkout.funct
 import { useRazorpay, type RazorpayOrderOptions } from "react-razorpay";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/checkout")({
   head: () => ({
@@ -18,6 +19,72 @@ export const Route = createFileRoute("/_authenticated/checkout")({
   }),
   component: Checkout,
 });
+
+type FormField =
+  "firstName" | "lastName" | "email" | "phone" | "address" | "city" | "state" | "postalCode";
+
+function validateField(name: FormField, value: string): string {
+  const trimmed = value.trim();
+
+  switch (name) {
+    case "firstName":
+      if (!trimmed) return "First name is required";
+      if (trimmed.length < 2) return "First name must be at least 2 characters";
+      if (!/^[a-zA-Z\s'-]+$/.test(trimmed)) return "First name can only contain letters";
+      return "";
+
+    case "lastName":
+      if (!trimmed) return "Last name is required";
+      if (!/^[a-zA-Z\s'-]+$/.test(trimmed)) return "Last name can only contain letters";
+      return "";
+
+    case "email":
+      if (!trimmed) return "Email address is required";
+      if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(trimmed)) {
+        return "Please enter a valid email address";
+      }
+      return "";
+
+    case "phone": {
+      if (!trimmed) return "Phone number is required";
+      const cleaned = trimmed.replace(/[\s\-()]/g, "");
+      // Indian mobile numbers: optional +91, 91, or 0 followed by 10 digits starting with 6, 7, 8, or 9
+      if (!/^(?:\+91|91|0)?[6-9]\d{9}$/.test(cleaned)) {
+        return "Enter a valid 10-digit mobile number (e.g. 9876543210)";
+      }
+      return "";
+    }
+
+    case "address":
+      if (!trimmed) return "Shipping address is required";
+      if (trimmed.length < 5) return "Please enter a complete address (at least 5 characters)";
+      return "";
+
+    case "city":
+      if (!trimmed) return "City is required";
+      if (trimmed.length < 2) return "City must be at least 2 characters";
+      if (!/^[a-zA-Z\s.-]+$/.test(trimmed)) return "City can only contain letters";
+      return "";
+
+    case "state":
+      if (!trimmed) return "State is required";
+      if (trimmed.length < 2) return "State must be at least 2 characters";
+      if (!/^[a-zA-Z\s.-]+$/.test(trimmed)) return "State can only contain letters";
+      return "";
+
+    case "postalCode": {
+      if (!trimmed) return "Postal code is required";
+      const cleaned = trimmed.replace(/\s/g, "");
+      if (!/^[1-9][0-9]{5}$/.test(cleaned)) {
+        return "Enter a valid 6-digit PIN code (e.g. 110001)";
+      }
+      return "";
+    }
+
+    default:
+      return "";
+  }
+}
 
 function Checkout() {
   const { items, subtotal, clear } = useCart();
@@ -37,14 +104,94 @@ function Checkout() {
     country: "India",
   });
 
+  const [errors, setErrors] = useState<Partial<Record<FormField, string>>>({});
+  const [touched, setTouched] = useState<Partial<Record<FormField, boolean>>>({});
+
+  const validateAll = (): { isValid: boolean; errors: Partial<Record<FormField, string>> } => {
+    const newErrors: Partial<Record<FormField, string>> = {};
+    const fields: FormField[] = [
+      "firstName",
+      "lastName",
+      "email",
+      "phone",
+      "address",
+      "city",
+      "state",
+      "postalCode",
+    ];
+
+    for (const field of fields) {
+      const error = validateField(field, form[field]);
+      if (error) {
+        newErrors[field] = error;
+      }
+    }
+
+    return {
+      isValid: Object.keys(newErrors).length === 0,
+      errors: newErrors,
+    };
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const name = e.target.name as FormField;
+    let value = e.target.value;
+
+    // Field-specific input restrictions
+    if (name === "postalCode") {
+      value = value.replace(/\D/g, "").slice(0, 6);
+    } else if (name === "phone") {
+      value = value.replace(/[^0-9+\s-]/g, "").slice(0, 15);
+    }
+
+    setForm((prev) => ({ ...prev, [name]: value }));
+
+    // Re-validate dynamically if the field was already touched or currently has an error
+    if (touched[name] || errors[name]) {
+      const fieldError = validateField(name, value);
+      setErrors((prev) => ({ ...prev, [name]: fieldError }));
+    }
+  };
+
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const name = e.target.name as FormField;
+    setTouched((prev) => ({ ...prev, [name]: true }));
+    const fieldError = validateField(name, form[name]);
+    setErrors((prev) => ({ ...prev, [name]: fieldError }));
   };
 
   const handleCheckout = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (items.length === 0) {
       alert("Your cart is empty");
+      return;
+    }
+
+    // Validate all fields
+    const { isValid, errors: validationErrors } = validateAll();
+    if (!isValid) {
+      setErrors(validationErrors);
+      setTouched({
+        firstName: true,
+        lastName: true,
+        email: true,
+        phone: true,
+        address: true,
+        city: true,
+        state: true,
+        postalCode: true,
+      });
+
+      // Scroll and focus first invalid field
+      const firstInvalidField = Object.keys(validationErrors)[0];
+      if (typeof document !== "undefined") {
+        const el = document.querySelector<HTMLInputElement>(`[name="${firstInvalidField}"]`);
+        if (el) {
+          el.focus();
+          el.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      }
       return;
     }
 
@@ -140,116 +287,207 @@ function Checkout() {
             <div className="grid md:grid-cols-12 gap-10 lg:gap-12">
               <div className="md:col-span-7">
                 <h2 className="font-serif text-2xl italic mb-6">Shipping Details</h2>
-                <form id="checkout-form" onSubmit={handleCheckout} className="space-y-4">
+                <form id="checkout-form" onSubmit={handleCheckout} noValidate className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs uppercase tracking-wider mb-1.5 text-foreground/60">
-                        First Name
+                        First Name <span className="text-destructive">*</span>
                       </label>
                       <input
-                        required
                         name="firstName"
                         value={form.firstName}
                         onChange={handleChange}
-                        className="w-full bg-transparent border border-black/15 px-4 py-2.5 text-sm outline-none focus:border-primary transition-colors"
+                        onBlur={handleBlur}
+                        placeholder="John"
+                        className={cn(
+                          "w-full bg-transparent border px-4 py-2.5 text-sm outline-none transition-colors",
+                          errors.firstName && touched.firstName
+                            ? "border-destructive/80 focus:border-destructive bg-destructive/5"
+                            : "border-black/15 focus:border-primary",
+                        )}
                       />
+                      {errors.firstName && touched.firstName && (
+                        <p className="text-[11px] text-destructive mt-1 font-medium">
+                          {errors.firstName}
+                        </p>
+                      )}
                     </div>
                     <div>
                       <label className="block text-xs uppercase tracking-wider mb-1.5 text-foreground/60">
-                        Last Name
+                        Last Name <span className="text-destructive">*</span>
                       </label>
                       <input
-                        required
                         name="lastName"
                         value={form.lastName}
                         onChange={handleChange}
-                        className="w-full bg-transparent border border-black/15 px-4 py-2.5 text-sm outline-none focus:border-primary transition-colors"
+                        onBlur={handleBlur}
+                        placeholder="Doe"
+                        className={cn(
+                          "w-full bg-transparent border px-4 py-2.5 text-sm outline-none transition-colors",
+                          errors.lastName && touched.lastName
+                            ? "border-destructive/80 focus:border-destructive bg-destructive/5"
+                            : "border-black/15 focus:border-primary",
+                        )}
                       />
+                      {errors.lastName && touched.lastName && (
+                        <p className="text-[11px] text-destructive mt-1 font-medium">
+                          {errors.lastName}
+                        </p>
+                      )}
                     </div>
                   </div>
 
                   <div>
                     <label className="block text-xs uppercase tracking-wider mb-1.5 text-foreground/60">
-                      Email
+                      Email Address <span className="text-destructive">*</span>
                     </label>
                     <input
-                      required
                       type="email"
                       name="email"
                       value={form.email}
                       onChange={handleChange}
-                      className="w-full bg-transparent border border-black/15 px-4 py-2.5 text-sm outline-none focus:border-primary transition-colors"
+                      onBlur={handleBlur}
+                      placeholder="john.doe@example.com"
+                      className={cn(
+                        "w-full bg-transparent border px-4 py-2.5 text-sm outline-none transition-colors",
+                        errors.email && touched.email
+                          ? "border-destructive/80 focus:border-destructive bg-destructive/5"
+                          : "border-black/15 focus:border-primary",
+                      )}
                     />
+                    {errors.email && touched.email && (
+                      <p className="text-[11px] text-destructive mt-1 font-medium">
+                        {errors.email}
+                      </p>
+                    )}
                   </div>
 
                   <div>
                     <label className="block text-xs uppercase tracking-wider mb-1.5 text-foreground/60">
-                      Phone
+                      Phone Number <span className="text-destructive">*</span>
                     </label>
                     <input
-                      required
                       type="tel"
                       name="phone"
                       value={form.phone}
                       onChange={handleChange}
-                      placeholder="+91"
-                      className="w-full bg-transparent border border-black/15 px-4 py-2.5 text-sm outline-none focus:border-primary transition-colors"
+                      onBlur={handleBlur}
+                      placeholder="e.g. 98765 43210"
+                      className={cn(
+                        "w-full bg-transparent border px-4 py-2.5 text-sm outline-none transition-colors",
+                        errors.phone && touched.phone
+                          ? "border-destructive/80 focus:border-destructive bg-destructive/5"
+                          : "border-black/15 focus:border-primary",
+                      )}
                     />
+                    {errors.phone && touched.phone ? (
+                      <p className="text-[11px] text-destructive mt-1 font-medium">
+                        {errors.phone}
+                      </p>
+                    ) : (
+                      <p className="text-[11px] text-foreground/40 mt-1">
+                        10-digit Indian mobile number
+                      </p>
+                    )}
                   </div>
 
                   <div>
                     <label className="block text-xs uppercase tracking-wider mb-1.5 text-foreground/60">
-                      Shipping Address
+                      Shipping Address <span className="text-destructive">*</span>
                     </label>
                     <input
-                      required
                       name="address"
                       value={form.address}
                       onChange={handleChange}
-                      placeholder="Street address, apartment, suite"
-                      className="w-full bg-transparent border border-black/15 px-4 py-2.5 text-sm outline-none focus:border-primary transition-colors"
+                      onBlur={handleBlur}
+                      placeholder="Street address, flat / apartment number, area"
+                      className={cn(
+                        "w-full bg-transparent border px-4 py-2.5 text-sm outline-none transition-colors",
+                        errors.address && touched.address
+                          ? "border-destructive/80 focus:border-destructive bg-destructive/5"
+                          : "border-black/15 focus:border-primary",
+                      )}
                     />
+                    {errors.address && touched.address && (
+                      <p className="text-[11px] text-destructive mt-1 font-medium">
+                        {errors.address}
+                      </p>
+                    )}
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs uppercase tracking-wider mb-1.5 text-foreground/60">
-                        City
+                        City <span className="text-destructive">*</span>
                       </label>
                       <input
-                        required
                         name="city"
                         value={form.city}
                         onChange={handleChange}
-                        className="w-full bg-transparent border border-black/15 px-4 py-2.5 text-sm outline-none focus:border-primary transition-colors"
+                        onBlur={handleBlur}
+                        placeholder="e.g. Mumbai"
+                        className={cn(
+                          "w-full bg-transparent border px-4 py-2.5 text-sm outline-none transition-colors",
+                          errors.city && touched.city
+                            ? "border-destructive/80 focus:border-destructive bg-destructive/5"
+                            : "border-black/15 focus:border-primary",
+                        )}
                       />
+                      {errors.city && touched.city && (
+                        <p className="text-[11px] text-destructive mt-1 font-medium">
+                          {errors.city}
+                        </p>
+                      )}
                     </div>
                     <div>
                       <label className="block text-xs uppercase tracking-wider mb-1.5 text-foreground/60">
-                        State
+                        State <span className="text-destructive">*</span>
                       </label>
                       <input
-                        required
                         name="state"
                         value={form.state}
                         onChange={handleChange}
-                        className="w-full bg-transparent border border-black/15 px-4 py-2.5 text-sm outline-none focus:border-primary transition-colors"
+                        onBlur={handleBlur}
+                        placeholder="e.g. Maharashtra"
+                        className={cn(
+                          "w-full bg-transparent border px-4 py-2.5 text-sm outline-none transition-colors",
+                          errors.state && touched.state
+                            ? "border-destructive/80 focus:border-destructive bg-destructive/5"
+                            : "border-black/15 focus:border-primary",
+                        )}
                       />
+                      {errors.state && touched.state && (
+                        <p className="text-[11px] text-destructive mt-1 font-medium">
+                          {errors.state}
+                        </p>
+                      )}
                     </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs uppercase tracking-wider mb-1.5 text-foreground/60">
-                        Postal Code
+                        Postal Code (PIN) <span className="text-destructive">*</span>
                       </label>
                       <input
-                        required
                         name="postalCode"
                         value={form.postalCode}
                         onChange={handleChange}
-                        className="w-full bg-transparent border border-black/15 px-4 py-2.5 text-sm outline-none focus:border-primary transition-colors"
+                        onBlur={handleBlur}
+                        placeholder="e.g. 400001"
+                        maxLength={6}
+                        className={cn(
+                          "w-full bg-transparent border px-4 py-2.5 text-sm outline-none transition-colors",
+                          errors.postalCode && touched.postalCode
+                            ? "border-destructive/80 focus:border-destructive bg-destructive/5"
+                            : "border-black/15 focus:border-primary",
+                        )}
                       />
+                      {errors.postalCode && touched.postalCode && (
+                        <p className="text-[11px] text-destructive mt-1 font-medium">
+                          {errors.postalCode}
+                        </p>
+                      )}
                     </div>
                     <div>
                       <label className="block text-xs uppercase tracking-wider mb-1.5 text-foreground/60">

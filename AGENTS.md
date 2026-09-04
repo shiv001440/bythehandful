@@ -100,14 +100,15 @@ There are three Supabase client scopes in the project:
    - `order_items`
    - `payments` (provider: `'razorpay'`, status: `'completed'`)
 
-### 4.4 Row Level Security (RLS) Rules
+### 4.5 Razorpay Webhook Reconciliation Flow
 
-When modifying or adding database tables:
+To protect against cases where a user closes their browser or loses connectivity after payment is captured but before client-side `verifyRazorpayPayment` finishes:
 
-- Always ensure `ENABLE ROW LEVEL SECURITY;` is present.
-- Authenticated users must have matching `FOR SELECT` and `FOR INSERT` policies checking `auth.uid() = user_id`.
-- Admins check `EXISTS (SELECT 1 FROM public.profiles WHERE profiles.id = auth.uid() AND profiles.is_admin = true)`.
-- All database schema updates should be committed as numbered migration files in `supabase/migrations/`.
+- **Endpoint:** `POST /api/webhooks/razorpay` (routed via `src/server.ts` to `src/lib/webhook.handler.ts`).
+- **Signature Verification:** Recomputes HMAC-SHA256 of the raw payload using `RAZORPAY_WEBHOOK_SECRET` and validates `x-razorpay-signature` using `crypto.timingSafeEqual`.
+- **Events Handled:**
+  - `payment.captured`: Reconciles order to `status = 'processing'` and `payment_status = 'paid'`, upserts `payments` record. If already marked paid, ignores gracefully (idempotent).
+  - `payment.failed`: Reconciles order to `status = 'payment_failed'` and `payment_status = 'failed'` (unless already paid).
 
 ---
 
@@ -119,10 +120,22 @@ When modifying or adding database tables:
 | `SUPABASE_PUBLISHABLE_KEY`      | Server          | Supabase anon/publishable key                              |
 | `VITE_SUPABASE_URL`             | Client & Server | Exposed Supabase URL for client                            |
 | `VITE_SUPABASE_PUBLISHABLE_KEY` | Client & Server | Exposed Supabase key for client                            |
-| `SUPABASE_SERVICE_ROLE_KEY`     | Server only     | Service role key for admin tasks (optional)                |
+| `SUPABASE_SERVICE_ROLE_KEY`     | Server only     | Service role key for admin tasks & webhooks                |
 | `VITE_RAZORPAY_KEY_ID`          | Client & Server | Razorpay Key ID (`rzp_test_...` or `rzp_live_...`)         |
 | `RAZORPAY_KEY_SECRET`           | Server only     | Razorpay Secret Key for order creation & HMAC verification |
+| `RAZORPAY_WEBHOOK_SECRET`       | Server only     | Dedicated Razorpay webhook secret for verifying webhooks   |
 | `GEMINI_API_KEY`                | Server          | Google Gemini API key (for AI features if enabled)         |
+
+### 5.1 Environment Separation & Production Release Protocol
+
+1. **Separate Supabase Projects:** Maintain completely distinct Supabase projects for Development/Staging and Production. Never connect local development or staging tests to the production database.
+2. **Dedicated Template Files:**
+   - [`.env.development.example`](file:///Users/aayushsingh/websites/By%20The%20Handful%20Website/.env.development.example): Development template with test keys.
+   - [`.env.production.example`](file:///Users/aayushsingh/websites/By%20The%20Handful%20Website/.env.production.example): Production reference for dashboard environment secret injection.
+3. **Isolated Live Key Deployment Step:**
+   - Keep `VITE_RAZORPAY_KEY_ID="rzp_test_..."` during development and all standard feature/bugfix commits.
+   - Switch `VITE_RAZORPAY_KEY_ID` to `"rzp_live_..."` **only** as a final, dedicated step in the production hosting dashboard (or an isolated release deployment) and never bundle it with routine code changes.
+   - If a live key is rotated or invalidated, it can be swapped directly in the hosting environment variables without requiring code refactoring or rollbacks.
 
 ---
 
@@ -132,3 +145,4 @@ When modifying or adding database tables:
 2. **Preserve SSR Boundaries:** Do not use `window`, `document`, or `localStorage` during SSR without guarding with `typeof window !== 'undefined'` or React effects.
 3. **Database schema changes:** Never modify remote DB without creating a matching SQL file in `supabase/migrations/`. Ensure RLS policies and `GRANT` statements cover both `SELECT` and `INSERT` operations.
 4. **Payment security:** Never trust client-reported payment totals. Calculate prices and verify HMAC signatures exclusively on the server.
+5. **Key isolation:** Never commit live API keys or secrets to git. Always use test keys (`rzp_test_...`) in development.

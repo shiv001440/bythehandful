@@ -5,15 +5,17 @@ import { z } from "zod";
 const DATA_URL_RE = /^data:image\/(png|jpeg|jpg|webp);base64,[A-Za-z0-9+/=]+$/;
 const MAX_DATA_URL_LEN = 8 * 1024 * 1024;
 
-const InputSchema = z.object({
-  text: z.string().max(20000).optional(),
-  imageDataUrl: z
-    .string()
-    .max(MAX_DATA_URL_LEN, "Image is too large.")
-    .regex(DATA_URL_RE, "Image must be an uploaded PNG, JPEG, or WebP file.")
-    .optional(),
-  notes: z.string().max(2000).optional(),
-});
+const InputSchema = z
+  .object({
+    text: z.string().max(20000).optional(),
+    imageDataUrl: z
+      .string()
+      .max(MAX_DATA_URL_LEN, "Image is too large.")
+      .regex(DATA_URL_RE, "Image must be an uploaded PNG, JPEG, or WebP file.")
+      .optional(),
+    notes: z.string().max(2000).optional(),
+  })
+  .strict();
 
 export const analyzeReport = createServerFn({ method: "POST" })
   .validator((input: unknown) => InputSchema.parse(input))
@@ -94,10 +96,11 @@ ${data.text || "(see attached image)"}`,
 
     if (!res.ok) {
       const errText = await res.text();
+      console.error("[HealthAdvisor] AI API Error:", res.status, errText);
       if (res.status === 429) throw new Error("Rate limit reached. Please try again in a moment.");
       if (res.status === 402)
         throw new Error("AI credits exhausted. Please add credits in your workspace.");
-      throw new Error(`AI request failed: ${errText.slice(0, 200)}`);
+      throw new Error("AI analysis is currently unavailable. Please try again later.");
     }
 
     const json = await res.json();

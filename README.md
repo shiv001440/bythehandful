@@ -48,23 +48,30 @@ npm install
 
 ### 2. Environment Variables
 
-Create a `.env` file in the root directory and configure the following variables:
+Create a `.env` file in the root directory (or copy from `.env.development.example`):
 
 ```env
-# Supabase Configuration
-SUPABASE_URL="https://<your-project-id>.supabase.co"
-SUPABASE_PUBLISHABLE_KEY="<your-publishable-key>"
-VITE_SUPABASE_URL="https://<your-project-id>.supabase.co"
-VITE_SUPABASE_PUBLISHABLE_KEY="<your-publishable-key>"
-VITE_SUPABASE_PROJECT_ID="<your-project-id>"
+# Supabase Configuration (Development Project)
+SUPABASE_URL="https://<your-dev-project-id>.supabase.co"
+SUPABASE_PUBLISHABLE_KEY="<your-dev-publishable-key>"
+VITE_SUPABASE_URL="https://<your-dev-project-id>.supabase.co"
+VITE_SUPABASE_PUBLISHABLE_KEY="<your-dev-publishable-key>"
+VITE_SUPABASE_PROJECT_ID="<your-dev-project-id>"
+SUPABASE_SERVICE_ROLE_KEY="<your-dev-service-role-key>"
 
-# Razorpay Configuration
+# Razorpay Configuration (Test Mode for development)
 VITE_RAZORPAY_KEY_ID="rzp_test_xxxxxxxxxx"
 RAZORPAY_KEY_SECRET="xxxxxxxxxxxxxxxxxxxx"
+RAZORPAY_WEBHOOK_SECRET="xxxxxxxxxxxxxxxxxxxx"
 
 # Optional (for AI features if enabled)
 GEMINI_API_KEY="<your-gemini-api-key>"
 ```
+
+> **Production Deployment Protocol**:
+>
+> - Use `.env.production.example` as reference for configuring production hosting secrets (Vercel, Netlify, Railway, etc.).
+> - Switch `VITE_RAZORPAY_KEY_ID` to `rzp_live_...` and `RAZORPAY_KEY_SECRET` to production values **only** as a final, separate deploy step directly in your hosting dashboard—never bundled in feature code commits. This allows instant isolation and rotation without redeploying code.
 
 ### 3. Database Setup (Supabase)
 
@@ -76,6 +83,10 @@ Run the SQL migration files located in `supabase/migrations/` sequentially in yo
 4. `20260818120000_add_admin_role.sql`
 5. `20260823143234_add_razorpay.sql`
 6. `20260824100000_add_payments_insert_policy.sql`
+7. `20260825120000_fix_rls_gaps.sql` (Admin profile access, anti-privilege escalation & table grants)
+8. `20260826100000_lockdown_orders_and_payments.sql` (Lock down payments immutability, order status protection & revoke dangerous privileges)
+9. `20260827100000_create_products_table.sql` (Authoritative products catalog table with price seeding)
+10. `20260828100000_enforce_payment_idempotency.sql` (Unique indexes & constraints for payment and order idempotency)
 
 ---
 

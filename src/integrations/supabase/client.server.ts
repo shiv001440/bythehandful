@@ -5,14 +5,36 @@
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "./types";
 
+import fs from "fs";
+import path from "path";
+
+export function getServerEnv(key: string): string | undefined {
+  if (process.env[key]) return process.env[key];
+  try {
+    const envPath = path.resolve(process.cwd(), ".env");
+    if (fs.existsSync(envPath)) {
+      const content = fs.readFileSync(envPath, "utf-8");
+      const match = content.match(new RegExp(`^${key}=["']?([^"'\r\n]+)["']?`, "m"));
+      if (match && match[1]) {
+        process.env[key] = match[1];
+        return match[1];
+      }
+    }
+  } catch {
+    // ignore
+  }
+  return undefined;
+}
+
 function createSupabaseAdminClient() {
   // Node.js < 22 WebSocket polyfill for @supabase/supabase-js
   if (typeof globalThis.WebSocket === "undefined") {
     globalThis.WebSocket = class WebSocket {} as unknown as typeof WebSocket;
   }
 
-  const SUPABASE_URL = process.env["SUPABASE_URL"];
-  const SUPABASE_SERVICE_ROLE_KEY = process.env["SUPABASE_SERVICE_ROLE_KEY"];
+  const SUPABASE_URL = getServerEnv("SUPABASE_URL") || process.env["SUPABASE_URL"];
+  const SUPABASE_SERVICE_ROLE_KEY =
+    getServerEnv("SUPABASE_SERVICE_ROLE_KEY") || process.env["SUPABASE_SERVICE_ROLE_KEY"];
 
   if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
     const missing = [
