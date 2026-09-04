@@ -3,7 +3,25 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { listAllOrders, updateOrderStatus } from "@/lib/admin.functions";
-import { ChevronLeft, ChevronRight, Filter } from "lucide-react";
+import { getProductImage } from "@/lib/product-images";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Filter,
+  Eye,
+  Package,
+  MapPin,
+  User,
+  Mail,
+  Phone,
+} from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -30,6 +48,39 @@ const ORDER_STATUS_FILTERS = [
 
 const ORDER_STATUSES = ["pending", "processing", "shipped", "delivered", "cancelled"] as const;
 
+type AdminOrderItem = {
+  id: string;
+  product_id?: string | null;
+  name: string;
+  origin?: string | null;
+  image_url?: string | null;
+  unit_amount: number;
+  quantity: number;
+  line_total: number;
+};
+
+type AdminOrder = {
+  id: string;
+  order_number: string;
+  status: string;
+  payment_status: string;
+  currency?: string | null;
+  subtotal_amount: number;
+  shipping_amount: number;
+  total_amount: number;
+  created_at: string;
+  customer_name?: string | null;
+  customer_email?: string | null;
+  customer_phone?: string | null;
+  shipping_address_line1?: string | null;
+  shipping_city?: string | null;
+  shipping_state?: string | null;
+  shipping_postal_code?: string | null;
+  shipping_country?: string | null;
+  razorpay_order_id?: string | null;
+  order_items?: AdminOrderItem[];
+};
+
 function AdminDashboard() {
   const queryClient = useQueryClient();
   const fetchAllOrders = useServerFn(listAllOrders);
@@ -37,6 +88,7 @@ function AdminDashboard() {
 
   const [page, setPage] = useState(1);
   const [selectedStatus, setSelectedStatus] = useState<string>("all");
+  const [selectedOrder, setSelectedOrder] = useState<AdminOrder | null>(null);
   const pageSize = 20;
 
   const { data, isLoading, isFetching, error } = useQuery({
@@ -45,7 +97,7 @@ function AdminDashboard() {
     placeholderData: keepPreviousData,
   });
 
-  const orders = data?.orders ?? [];
+  const orders = (data?.orders ?? []) as unknown as AdminOrder[];
   const totalOrders = data?.total ?? 0;
   const totalPages = data?.totalPages ?? 1;
 
@@ -98,7 +150,7 @@ function AdminDashboard() {
                   <button
                     key={f.value}
                     onClick={() => handleStatusFilterChange(f.value)}
-                    className={`px-3 py-1.5 text-[11px] tracking-[0.18em] uppercase font-semibold transition whitespace-nowrap ${
+                    className={`px-3 py-1.5 text-[11px] tracking-[0.18em] uppercase font-semibold transition whitespace-nowrap cursor-pointer ${
                       isActive
                         ? "bg-foreground text-background"
                         : "bg-transparent text-foreground/70 hover:bg-black/5 hover:text-foreground border border-black/10"
@@ -210,10 +262,19 @@ function AdminDashboard() {
                             </div>
                           </td>
                           <td className="px-5 py-4 text-xs">
-                            <span className="inline-flex items-center px-2 py-0.5 border border-black/10 bg-black/[0.03] text-foreground/70 text-[11px]">
-                              {order.order_items?.length || 0} item
-                              {(order.order_items?.length || 0) === 1 ? "" : "s"}
-                            </span>
+                            <button
+                              type="button"
+                              onClick={() => setSelectedOrder(order)}
+                              className="inline-flex items-center gap-1.5 px-2.5 py-1 border border-black/15 bg-black/[0.03] hover:bg-primary/10 hover:border-primary/40 text-foreground text-[11px] font-medium transition cursor-pointer group"
+                              title="Click to view ordered items and details"
+                            >
+                              <Package className="size-3 text-foreground/50 group-hover:text-primary transition-colors" />
+                              <span>
+                                {order.order_items?.length || 0} item
+                                {(order.order_items?.length || 0) === 1 ? "" : "s"}
+                              </span>
+                              <Eye className="size-3 text-foreground/40 group-hover:text-primary transition-colors ml-0.5" />
+                            </button>
                           </td>
                           <td className="px-5 py-4 font-serif text-base font-semibold">
                             {fmt(order.total_amount)}
@@ -334,6 +395,234 @@ function AdminDashboard() {
           )}
         </div>
       </main>
+
+      {/* Order Details Dialog */}
+      <Dialog
+        open={Boolean(selectedOrder)}
+        onOpenChange={(isOpen) => {
+          if (!isOpen) setSelectedOrder(null);
+        }}
+      >
+        <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col p-0 overflow-hidden bg-background text-foreground border border-black/15 shadow-2xl rounded-none sm:rounded-none">
+          {selectedOrder && (
+            <>
+              {/* Header */}
+              <div className="p-6 border-b border-black/10 bg-black/[0.02]">
+                <div className="flex items-start justify-between gap-4 pr-6">
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-[10px] tracking-[0.25em] uppercase text-foreground/50 font-bold">
+                        Order Details
+                      </span>
+                      <span
+                        className={`inline-flex items-center px-2 py-0.5 text-[9px] uppercase tracking-wider font-bold ${
+                          selectedOrder.payment_status === "paid"
+                            ? "bg-emerald-50 text-emerald-800 border border-emerald-200"
+                            : selectedOrder.payment_status === "failed"
+                              ? "bg-red-50 text-red-800 border border-red-200"
+                              : "bg-amber-50 text-amber-800 border border-amber-200"
+                        }`}
+                      >
+                        {selectedOrder.payment_status}
+                      </span>
+                    </div>
+                    <DialogTitle className="font-serif text-2xl md:text-3xl italic tracking-tight">
+                      {selectedOrder.order_number}
+                    </DialogTitle>
+                    <DialogDescription className="text-xs text-foreground/60 mt-1">
+                      Placed on{" "}
+                      {new Date(selectedOrder.created_at).toLocaleDateString("en-IN", {
+                        weekday: "short",
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </DialogDescription>
+                  </div>
+
+                  {/* Status update directly in modal */}
+                  <div className="flex flex-col items-end gap-1.5">
+                    <label className="text-[10px] tracking-[0.2em] uppercase text-foreground/50 font-semibold">
+                      Status
+                    </label>
+                    <select
+                      className="bg-background border border-black/20 px-2.5 py-1 text-xs uppercase tracking-wider font-semibold outline-none focus:border-primary transition cursor-pointer hover:border-black/40"
+                      value={selectedOrder.status}
+                      disabled={updateMutation.isPending}
+                      onChange={(e) => {
+                        const newStatus = e.target.value;
+                        if (
+                          window.confirm(
+                            `Update order ${selectedOrder.order_number} to "${newStatus.toUpperCase()}"?`,
+                          )
+                        ) {
+                          updateMutation.mutate({
+                            orderId: selectedOrder.id,
+                            status: newStatus,
+                          });
+                          setSelectedOrder((prev) =>
+                            prev ? { ...prev, status: newStatus } : null,
+                          );
+                        }
+                      }}
+                    >
+                      {ORDER_STATUSES.map((s) => (
+                        <option key={s} value={s}>
+                          {s.toUpperCase()}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              {/* Scrollable Body */}
+              <div className="flex-1 overflow-y-auto p-6 space-y-6">
+                {/* Customer & Shipping Section */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 border border-black/10 bg-black/[0.01]">
+                  <div>
+                    <p className="text-[10px] tracking-[0.2em] uppercase font-bold text-foreground/50 mb-2 flex items-center gap-1.5">
+                      <User className="size-3.5" /> Customer Info
+                    </p>
+                    <p className="font-medium text-sm text-foreground">
+                      {selectedOrder.customer_name || "Guest Customer"}
+                    </p>
+                    <p className="text-xs text-foreground/70 mt-0.5 flex items-center gap-1.5">
+                      <Mail className="size-3 text-foreground/40" />
+                      {selectedOrder.customer_email || "No email"}
+                    </p>
+                    <p className="text-xs text-foreground/70 mt-0.5 flex items-center gap-1.5 font-mono">
+                      <Phone className="size-3 text-foreground/40" />
+                      {selectedOrder.customer_phone || "No phone"}
+                    </p>
+                  </div>
+
+                  <div>
+                    <p className="text-[10px] tracking-[0.2em] uppercase font-bold text-foreground/50 mb-2 flex items-center gap-1.5">
+                      <MapPin className="size-3.5" /> Shipping Address
+                    </p>
+                    <div className="text-xs text-foreground/85 leading-relaxed">
+                      {selectedOrder.shipping_address_line1 && (
+                        <div>{selectedOrder.shipping_address_line1}</div>
+                      )}
+                      <div>
+                        {[
+                          selectedOrder.shipping_city,
+                          selectedOrder.shipping_state,
+                          selectedOrder.shipping_postal_code,
+                        ]
+                          .filter(Boolean)
+                          .join(", ")}
+                      </div>
+                      {selectedOrder.shipping_country && (
+                        <div>{selectedOrder.shipping_country}</div>
+                      )}
+                      {!selectedOrder.shipping_address_line1 &&
+                        !selectedOrder.shipping_city &&
+                        !selectedOrder.shipping_state && (
+                          <div className="text-foreground/45 italic">No shipping address recorded</div>
+                        )}
+                    </div>
+                    {selectedOrder.razorpay_order_id && (
+                      <p className="text-[10px] text-foreground/45 mt-2 font-mono truncate">
+                        Razorpay: {selectedOrder.razorpay_order_id}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Items Section */}
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <p className="text-[10px] tracking-[0.2em] uppercase font-bold text-foreground/50 flex items-center gap-1.5">
+                      <Package className="size-3.5" /> Ordered Items (
+                      {selectedOrder.order_items?.length || 0})
+                    </p>
+                    <span className="text-xs text-foreground/60">
+                      Total Units:{" "}
+                      {selectedOrder.order_items?.reduce((sum, item) => sum + item.quantity, 0) ||
+                        0}
+                    </span>
+                  </div>
+
+                  {!selectedOrder.order_items || selectedOrder.order_items.length === 0 ? (
+                    <div className="p-6 text-center border border-dashed border-black/15 text-foreground/50 text-xs italic">
+                      No line items recorded for this order.
+                    </div>
+                  ) : (
+                    <div className="border border-black/10 divide-y divide-black/5">
+                      {selectedOrder.order_items.map((item) => {
+                        const itemImg = getProductImage(
+                          item.product_id,
+                          item.image_url,
+                          item.name,
+                        );
+                        return (
+                          <div
+                            key={item.id}
+                            className="p-3.5 flex items-center gap-4 hover:bg-black/[0.01] transition-colors"
+                          >
+                            <img
+                              src={itemImg}
+                              alt={item.name}
+                              className="size-14 object-cover border border-black/10 shrink-0 bg-secondary"
+                              onError={(e) => {
+                                e.currentTarget.onerror = null;
+                                e.currentTarget.src = getProductImage("kaju");
+                              }}
+                            />
+                            <div className="flex-1 min-w-0">
+                              <p className="font-serif text-base text-foreground truncate">
+                                {item.name}
+                              </p>
+                              {item.origin && (
+                                <p className="text-[10px] tracking-[0.15em] uppercase text-foreground/50 truncate mt-0.5">
+                                  {item.origin}
+                                </p>
+                              )}
+                              <div className="flex items-center gap-3 mt-1 text-xs text-foreground/60">
+                                <span className="inline-flex items-center px-2 py-0.5 bg-black/5 text-[11px] font-medium">
+                                  Qty: {item.quantity}
+                                </span>
+                                <span>Unit: {fmt(item.unit_amount)}</span>
+                              </div>
+                            </div>
+                            <div className="text-right shrink-0">
+                              <p className="font-serif text-base font-semibold">
+                                {fmt(item.line_total)}
+                              </p>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+
+                {/* Pricing Summary */}
+                <div className="border-t border-black/10 pt-4 space-y-1.5 text-xs">
+                  <div className="flex justify-between text-foreground/60">
+                    <span>Subtotal</span>
+                    <span>{fmt(selectedOrder.subtotal_amount || selectedOrder.total_amount)}</span>
+                  </div>
+                  {selectedOrder.shipping_amount > 0 && (
+                    <div className="flex justify-between text-foreground/60">
+                      <span>Shipping Fee</span>
+                      <span>{fmt(selectedOrder.shipping_amount)}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between items-baseline pt-2 border-t border-black/5 font-serif text-lg font-semibold text-foreground">
+                    <span>Total Amount</span>
+                    <span className="text-xl italic">{fmt(selectedOrder.total_amount)}</span>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
       <Footer />
     </div>
   );

@@ -30,7 +30,7 @@ export const listAllOrders = createServerFn({ method: "POST" })
     let query = context.supabase
       .from("orders")
       .select(
-        "id, order_number, status, payment_status, currency, subtotal_amount, shipping_amount, total_amount, created_at, customer_name, customer_email, customer_phone, shipping_city, shipping_state, order_items(id, name, origin, image_url, unit_amount, quantity, line_total)",
+        "id, order_number, status, payment_status, currency, subtotal_amount, shipping_amount, total_amount, created_at, customer_name, customer_email, customer_phone, shipping_address_line1, shipping_city, shipping_state, shipping_postal_code, shipping_country, razorpay_order_id, order_items(id, product_id, name, origin, image_url, unit_amount, quantity, line_total)",
         { count: "exact" },
       );
 
