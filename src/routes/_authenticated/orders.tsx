@@ -8,6 +8,8 @@ import { useCart } from "@/lib/cart";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 
+import { getProductImage } from "@/lib/product-images";
+
 export const Route = createFileRoute("/_authenticated/orders")({
   head: () => ({
     meta: [
@@ -104,20 +106,29 @@ function OrdersPage() {
                   </div>
                 </div>
                 <ul className="mt-5 divide-y divide-black/5">
-                  {o.order_items?.map((i) => (
-                    <li key={i.id} className="py-3 flex items-center gap-3">
-                      {i.image_url && (
-                        <img src={i.image_url} alt={i.name} className="size-12 object-cover" />
-                      )}
-                      <div className="flex-1 min-w-0">
-                        <p className="font-serif text-base truncate">{i.name}</p>
-                        <p className="text-[10px] tracking-[0.18em] uppercase text-foreground/50">
-                          Qty {i.quantity}
-                        </p>
-                      </div>
-                      <span className="text-sm">{fmt(i.line_total)}</span>
-                    </li>
-                  ))}
+                  {o.order_items?.map((i) => {
+                    const itemImg = getProductImage(i.product_id, i.image_url, i.name);
+                    return (
+                      <li key={i.id} className="py-3 flex items-center gap-3">
+                        <img
+                          src={itemImg}
+                          alt={i.name}
+                          className="size-12 object-cover border border-black/5 shrink-0"
+                          onError={(e) => {
+                            e.currentTarget.onerror = null;
+                            e.currentTarget.src = getProductImage("kaju");
+                          }}
+                        />
+                        <div className="flex-1 min-w-0">
+                          <p className="font-serif text-base truncate">{i.name}</p>
+                          <p className="text-[10px] tracking-[0.18em] uppercase text-foreground/50">
+                            Qty {i.quantity}
+                          </p>
+                        </div>
+                        <span className="text-sm">{fmt(i.line_total)}</span>
+                      </li>
+                    );
+                  })}
                 </ul>
               </article>
             ))}

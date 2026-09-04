@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useCart } from "@/lib/cart";
+import { getProductImage } from "@/lib/product-images";
 
 function fmt(n: number) {
   return `₹${n.toLocaleString("en-IN")}`;
@@ -72,7 +73,7 @@ export function CartDrawer() {
               {items.map((it) => (
                 <li key={it.id} className="py-5 flex gap-4">
                   <img
-                    src={it.img}
+                    src={getProductImage(it.id, it.img, it.name)}
                     alt={it.name}
                     className="size-20 rounded-lg object-cover bg-secondary"
                   />
