@@ -3,14 +3,16 @@ import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import react from "@vitejs/plugin-react";
 import tsConfigPaths from "vite-tsconfig-paths";
 import tailwindcss from "@tailwindcss/vite";
+import netlify from "@netlify/vite-plugin-tanstack-start";
 
 export default defineConfig({
   plugins: [
     tanstackStart({
-      server: { entry: "server", preset: "cloudflare" },
+      server: { entry: "server" },
     }),
     react(),
     tsConfigPaths(),
     tailwindcss(),
+    netlify(),
   ],
 });
