@@ -7,6 +7,10 @@ import type { Database } from "@/integrations/supabase/types";
 import { assertRateLimit, getClientIp } from "./rate-limiter";
 
 function getServerSupabaseClient() {
+  if (typeof globalThis.WebSocket === "undefined") {
+    globalThis.WebSocket = class WebSocket {} as unknown as typeof WebSocket;
+  }
+
   const url = process.env["SUPABASE_URL"] || process.env["VITE_SUPABASE_URL"];
   const key =
     process.env["SUPABASE_PUBLISHABLE_KEY"] || process.env["VITE_SUPABASE_PUBLISHABLE_KEY"];
