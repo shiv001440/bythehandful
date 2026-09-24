@@ -11,25 +11,21 @@ export function Footer() {
           </div>
           <div className="flex gap-16 text-[10px] tracking-[0.3em] uppercase font-semibold">
             <div className="flex flex-col gap-4">
-              <a href="#" className="hover:text-amber transition">
-                The Archive
-              </a>
-              <a href="#" className="hover:text-amber transition">
-                Sourcing
-              </a>
-              <a href="#" className="hover:text-amber transition">
-                Gift Concierge
-              </a>
-            </div>
-            <div className="flex flex-col gap-4">
-              <a href="#" className="hover:text-amber transition">
-                Journal
-              </a>
-              <a href="#" className="hover:text-amber transition">
-                Shipping
-              </a>
-              <a href="#" className="hover:text-amber transition">
+              <a
+                href="https://wa.me/919810020801"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-amber transition"
+              >
                 Contact
+              </a>
+              <a
+                href="https://www.instagram.com/bythehandfulofficial/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-amber transition"
+              >
+                Instagram
               </a>
             </div>
           </div>

@@ -522,7 +522,9 @@ function AdminDashboard() {
                       {!selectedOrder.shipping_address_line1 &&
                         !selectedOrder.shipping_city &&
                         !selectedOrder.shipping_state && (
-                          <div className="text-foreground/45 italic">No shipping address recorded</div>
+                          <div className="text-foreground/45 italic">
+                            No shipping address recorded
+                          </div>
                         )}
                     </div>
                     {selectedOrder.razorpay_order_id && (
@@ -554,11 +556,7 @@ function AdminDashboard() {
                   ) : (
                     <div className="border border-black/10 divide-y divide-black/5">
                       {selectedOrder.order_items.map((item) => {
-                        const itemImg = getProductImage(
-                          item.product_id,
-                          item.image_url,
-                          item.name,
-                        );
+                        const itemImg = getProductImage(item.product_id, item.image_url, item.name);
                         return (
                           <div
                             key={item.id}

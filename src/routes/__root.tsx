@@ -12,6 +12,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { CartProvider } from "../lib/cart";
 import { CartDrawer } from "../components/CartDrawer";
+import { FloatingWhatsApp } from "../components/FloatingWhatsApp";
 
 function NotFoundComponent() {
   return (
@@ -139,6 +140,7 @@ function RootComponent() {
         {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
         <Outlet />
         <CartDrawer />
+        <FloatingWhatsApp />
       </CartProvider>
     </QueryClientProvider>
   );

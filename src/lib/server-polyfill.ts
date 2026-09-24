@@ -8,6 +8,9 @@ import WebSocket from "ws";
 if (typeof globalThis.WebSocket === "undefined") {
   globalThis.WebSocket = WebSocket as unknown as typeof globalThis.WebSocket;
 }
-if (typeof global !== "undefined" && typeof (global as { WebSocket?: unknown }).WebSocket === "undefined") {
+if (
+  typeof global !== "undefined" &&
+  typeof (global as { WebSocket?: unknown }).WebSocket === "undefined"
+) {
   (global as { WebSocket?: unknown }).WebSocket = WebSocket;
 }

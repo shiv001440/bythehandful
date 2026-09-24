@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useCart } from "@/lib/cart";
 import { createRazorpayOrder, verifyRazorpayPayment } from "@/lib/checkout.functions";
+import { STANDARD_SHIPPING_FEE } from "@/lib/products";
 import { useRazorpay, type RazorpayOrderOptions } from "react-razorpay";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -528,11 +529,11 @@ function Checkout() {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-foreground/70">Shipping</span>
-                      <span>₹10</span>
+                      <span>₹{STANDARD_SHIPPING_FEE}</span>
                     </div>
                     <div className="flex justify-between text-base font-semibold mt-4 pt-4 border-t border-black/10">
                       <span>Total</span>
-                      <span>₹{(subtotal + 10).toLocaleString("en-IN")}</span>
+                      <span>₹{(subtotal + STANDARD_SHIPPING_FEE).toLocaleString("en-IN")}</span>
                     </div>
                   </div>
 
