@@ -5,8 +5,9 @@
 // Suffixes often present in variant IDs (e.g. -250g, -500g, -1kg)
 const VARIANT_SUFFIX_REGEX = /-(250g|500g|100g|200g|50g|1kg|1g|2g|5g)$/i;
 
-// Regex to extract unit in parentheses like "California Almonds (250g)"
-const PARENTHESES_UNIT_REGEX = /\(([^)]+)\)$/;
+// Regex to extract unit/weight in parentheses like (250g), (500g), (1kg), (100g), (1 Box), etc.
+const PARENTHESES_UNIT_REGEX =
+  /\(((?:\d+\s*(?:g|kg|gm|gms|ml|l|box|jar|piece|pc|pieces|chocolates)|luxury gift hamper|executive keepsake box|classic corporate box|signature festive box|trio grand gift box|classic trio hamper|premium basket|curated hamper|keepsake box).*?)\)$/i;
 
 export interface ProductUnitSource {
   id?: string | null;
@@ -27,7 +28,7 @@ export function getProductPacketUnit(item?: ProductUnitSource | null): string {
     return item.unit.trim();
   }
 
-  // 2. Unit from name in parentheses (e.g. "California Almonds (500g)")
+  // 2. Unit from name in parentheses if it's an actual weight/unit (e.g. "California Almonds (500g)")
   if (item.name) {
     const match = item.name.match(PARENTHESES_UNIT_REGEX);
     if (match && match[1]) {
@@ -61,10 +62,10 @@ export function getProductPacketUnit(item?: ProductUnitSource | null): string {
 }
 
 /**
- * Strips any trailing unit in parentheses from a product name, returning the clean title.
- * e.g. "California Almonds (250g)" -> "California Almonds"
+ * Strips any trailing weight/size unit in parentheses from a product name, returning the clean title.
+ * e.g. "California Almonds (250g)" -> "California Almonds", while preserving brand distinctions like "Cal Almonds (Sanora)"
  */
 export function getCleanProductName(name?: string | null): string {
   if (!name) return "";
-  return name.replace(/\s*\([^)]+\)$/, "").trim();
+  return name.replace(new RegExp(`\\s*${PARENTHESES_UNIT_REGEX.source}`, "i"), "").trim();
 }
