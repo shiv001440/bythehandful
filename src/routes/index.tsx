@@ -81,18 +81,29 @@ function ProductCard({ p, onAdd }: { p: Product; i?: number; onAdd: (p: Product)
 function Index() {
   const { add, count, setOpen } = useCart();
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
-  const [currentHamperIdx, setCurrentHamperIdx] = useState(0);
+  const [currentLuxuryIdx, setCurrentLuxuryIdx] = useState(0);
+  const [currentCorporateIdx, setCurrentCorporateIdx] = useState(0);
 
   const luxuryHamperItems =
     hamperCategories.find((c) => c.id === "hampers-luxury")?.items || [];
+  const corporateHamperItems =
+    hamperCategories.find((c) => c.id === "hampers-corporate")?.items || [];
 
   useEffect(() => {
     if (luxuryHamperItems.length === 0) return;
     const interval = setInterval(() => {
-      setCurrentHamperIdx((prev) => (prev + 1) % luxuryHamperItems.length);
-    }, 3000);
+      setCurrentLuxuryIdx((prev) => (prev + 1) % luxuryHamperItems.length);
+    }, 3200);
     return () => clearInterval(interval);
   }, [luxuryHamperItems.length]);
+
+  useEffect(() => {
+    if (corporateHamperItems.length === 0) return;
+    const interval = setInterval(() => {
+      setCurrentCorporateIdx((prev) => (prev + 1) % corporateHamperItems.length);
+    }, 2700);
+    return () => clearInterval(interval);
+  }, [corporateHamperItems.length]);
 
   const onAdd = (p: Product) => {
     add({ id: p.id, name: p.name, origin: p.origin, price: p.price, img: p.img });
@@ -176,75 +187,220 @@ function Index() {
       <Navbar />
 
       {/* HERO */}
-      <section className="relative min-h-[92vh] flex flex-col justify-center px-6 md:px-12 border-b border-black/5 overflow-hidden">
+      <section className="relative min-h-[92vh] md:min-h-[92vh] flex flex-col justify-center px-4 md:px-8 border-b border-black/5 overflow-hidden">
 
-        <div className="absolute top-6 left-1/2 -translate-x-1/2 text-center z-10">
-          <span className="text-[10px] tracking-[0.35em] uppercase font-semibold text-primary">
-            Bhagwandas Chamanlal &nbsp;·&nbsp; Est. 1923 &nbsp;·&nbsp; Katra Ishwar Bhavan
-          </span>
-        </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto w-full grid md:grid-cols-12 gap-10 items-center py-24 animate-reveal-up">
-          <div className="md:col-span-7">
-            <h1 className="font-serif text-6xl md:text-8xl lg:text-9xl leading-[0.85] tracking-tighter italic text-balance">
+        <div className="relative z-10 w-full grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-4 lg:gap-6 items-center pt-6 pb-16 animate-reveal-up">
+
+          {/* LEFT — Luxury Hampers Carousel */}
+          <div className="hidden md:flex flex-col gap-3">
+            <p className="text-[9px] tracking-[0.4em] uppercase font-bold text-primary/80 text-center">Luxury Hampers</p>
+            <a
+              href="/collections/hampers-luxury"
+              className="group relative block aspect-[3/4] w-full mx-auto bg-gradient-warm ring-1 ring-primary/20 overflow-hidden shadow-elegant"
+            >
+              {luxuryHamperItems.map((hamper, idx) => (
+                <img
+                  key={hamper.id}
+                  src={hamper.img}
+                  alt={hamper.name}
+                  className={`absolute inset-0 w-full h-full object-cover transition-all duration-1000 group-hover:scale-[1.04] ${
+                    idx === currentLuxuryIdx ? "opacity-100 z-10" : "opacity-0 z-0 pointer-events-none"
+                  }`}
+                />
+              ))}
+              {/* Label strip */}
+              <div className="absolute bottom-0 inset-x-0 z-20 bg-gradient-to-t from-ink/80 to-transparent px-4 py-4">
+                <div className="relative h-9 overflow-hidden">
+                  {luxuryHamperItems.map((hamper, idx) => (
+                    <p
+                      key={hamper.id}
+                      className={`absolute inset-0 font-serif italic text-base text-background leading-tight transition-all duration-700 ${
+                        idx === currentLuxuryIdx
+                          ? "opacity-100 translate-y-0"
+                          : "opacity-0 translate-y-3 pointer-events-none"
+                      }`}
+                    >
+                      {hamper.name}
+                    </p>
+                  ))}
+                </div>
+                {/* Dot indicators */}
+                <div className="flex gap-1 mt-2">
+                  {luxuryHamperItems.slice(0, 8).map((_, idx) => (
+                    <div
+                      key={idx}
+                      className={`h-[2px] flex-1 rounded-full transition-all duration-500 ${
+                        idx === currentLuxuryIdx % 8 ? "bg-primary" : "bg-white/30"
+                      }`}
+                    />
+                  ))}
+                </div>
+              </div>
+            </a>
+          </div>
+
+          {/* CENTER — Hero Text */}
+          <div className="flex flex-col items-center text-center w-[300px] lg:w-[340px] mx-auto px-2">
+            <h1 className="font-serif text-5xl md:text-5xl lg:text-6xl leading-[0.88] tracking-tighter italic text-balance">
               By the <br />
               Handful.
             </h1>
-            <p className="mt-10 max-w-md text-lg leading-relaxed text-foreground/70">
+            <p className="mt-5 text-sm leading-relaxed text-foreground/70">
               A century of sourcing the world's most exceptional dry fruits — elevated into
-              breathtaking luxury keepsakes. Heritage-grade quality, curated for the art of premium
-              gifting.
+              breathtaking luxury keepsakes.
             </p>
-            <div className="mt-10 flex flex-wrap gap-6 items-center">
-              <a
-                href="/collections/hampers-luxury"
-                className="px-7 py-3 text-sm bg-primary text-secondary font-semibold uppercase tracking-[0.2em] shadow-elegant hover:-translate-y-1 hover:shadow-[var(--shadow-elegant)] transition-all duration-300"
-              >
-                Shop Luxury Hampers
-              </a>
+            <div className="mt-6 flex flex-col gap-3 items-center justify-center">
               <a
                 href="#about"
-                className="group relative text-[9.5px] uppercase tracking-[0.25em] font-semibold text-foreground transition-colors duration-300 hover:text-primary"
+                className="group relative text-[9px] uppercase tracking-[0.25em] font-semibold text-foreground transition-colors duration-300 hover:text-primary"
               >
                 Explore 100-year history
-                <span className="absolute -bottom-1 left-0 w-full h-[1px] bg-secondary scale-x-100 group-hover:bg-primary transition-colors duration-300" />
+                <span className="absolute -bottom-1 left-0 w-full h-[1px] bg-primary/40 scale-x-100 group-hover:bg-primary transition-colors duration-300" />
               </a>
+            </div>
+            {/* Stats strip */}
+            <div className="mt-8 flex gap-5 items-center border-t border-ink/10 pt-6">
+              <div className="text-center">
+                <p className="font-serif text-2xl">100+</p>
+                <p className="text-[8px] tracking-[0.2em] uppercase text-foreground/50 mt-1 font-semibold">Years</p>
+              </div>
+              <div className="w-px h-6 bg-ink/15" />
+              <div className="text-center">
+                <p className="font-serif text-2xl">4</p>
+                <p className="text-[8px] tracking-[0.2em] uppercase text-foreground/50 mt-1 font-semibold">Generations</p>
+              </div>
+              <div className="w-px h-6 bg-ink/15" />
+              <div className="text-center">
+                <p className="font-serif text-2xl italic">Est.</p>
+                <p className="text-[8px] tracking-[0.2em] uppercase text-foreground/50 mt-1 font-semibold">1923</p>
+              </div>
             </div>
           </div>
 
-          <div className="md:col-span-5 relative group">
-            <div className="aspect-[4/5] bg-gradient-warm rounded-sm ring-1 ring-secondary/20 p-4">
-              <div className="relative w-full h-full overflow-hidden">
+          {/* RIGHT — Corporate Hampers Carousel (desktop) */}
+          <div className="hidden md:flex flex-col gap-3">
+            <p className="text-[9px] tracking-[0.4em] uppercase font-bold text-primary/80 text-center">Corporate Hampers</p>
+            <a
+              href="/collections/hampers-corporate"
+              className="group relative block aspect-[3/4] w-full mx-auto bg-gradient-warm ring-1 ring-primary/20 overflow-hidden shadow-elegant"
+            >
+              {corporateHamperItems.map((hamper, idx) => (
+                <img
+                  key={hamper.id}
+                  src={hamper.img}
+                  alt={hamper.name}
+                  className={`absolute inset-0 w-full h-full object-cover transition-all duration-1000 group-hover:scale-[1.04] ${
+                    idx === currentCorporateIdx ? "opacity-100 z-10" : "opacity-0 z-0 pointer-events-none"
+                  }`}
+                />
+              ))}
+              {/* Label strip */}
+              <div className="absolute bottom-0 inset-x-0 z-20 bg-gradient-to-t from-ink/80 to-transparent px-4 py-4">
+                <div className="relative h-9 overflow-hidden">
+                  {corporateHamperItems.map((hamper, idx) => (
+                    <p
+                      key={hamper.id}
+                      className={`absolute inset-0 font-serif italic text-base text-background leading-tight transition-all duration-700 ${
+                        idx === currentCorporateIdx
+                          ? "opacity-100 translate-y-0"
+                          : "opacity-0 translate-y-3 pointer-events-none"
+                      }`}
+                    >
+                      {hamper.name}
+                    </p>
+                  ))}
+                </div>
+                {/* Dot indicators */}
+                <div className="flex gap-1 mt-2">
+                  {corporateHamperItems.map((_, idx) => (
+                    <div
+                      key={idx}
+                      className={`h-[2px] flex-1 rounded-full transition-all duration-500 ${
+                        idx === currentCorporateIdx ? "bg-primary" : "bg-white/30"
+                      }`}
+                    />
+                  ))}
+                </div>
+              </div>
+            </a>
+          </div>
+
+          {/* ── MOBILE ONLY: Side-by-side carousels below text ── */}
+          <div className="md:hidden col-span-full mt-6 grid grid-cols-2 gap-3">
+            {/* Luxury */}
+            <div className="flex flex-col gap-2">
+              <p className="text-[8px] tracking-[0.35em] uppercase font-bold text-primary/80 text-center">Luxury</p>
+              <a
+                href="/collections/hampers-luxury"
+                className="group relative block aspect-[3/4] w-full bg-gradient-warm ring-1 ring-primary/20 overflow-hidden shadow-elegant"
+              >
                 {luxuryHamperItems.map((hamper, idx) => (
                   <img
                     key={hamper.id}
                     src={hamper.img}
                     alt={hamper.name}
-                    className={`absolute inset-0 w-full h-full object-cover animate-float-slow transition-all duration-1000 group-hover:scale-105 ${idx === currentHamperIdx ? "opacity-100 z-10" : "opacity-0 z-0 pointer-events-none"
-                      }`}
+                    className={`absolute inset-0 w-full h-full object-cover transition-all duration-1000 ${
+                      idx === currentLuxuryIdx ? "opacity-100 z-10" : "opacity-0 z-0 pointer-events-none"
+                    }`}
                   />
                 ))}
-              </div>
+                <div className="absolute bottom-0 inset-x-0 z-20 bg-gradient-to-t from-ink/70 to-transparent px-3 py-3">
+                  <div className="relative h-7 overflow-hidden">
+                    {luxuryHamperItems.map((hamper, idx) => (
+                      <p key={hamper.id} className={`absolute inset-0 font-serif italic text-sm text-background leading-tight transition-all duration-700 ${
+                        idx === currentLuxuryIdx ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"
+                      }`}>{hamper.name}</p>
+                    ))}
+                  </div>
+                  <div className="flex gap-1 mt-1">
+                    {luxuryHamperItems.slice(0, 8).map((_, idx) => (
+                      <div key={idx} className={`h-[2px] flex-1 rounded-full transition-all duration-500 ${
+                        idx === currentLuxuryIdx % 8 ? "bg-primary" : "bg-white/30"
+                      }`} />
+                    ))}
+                  </div>
+                </div>
+              </a>
             </div>
-            <div className="absolute -bottom-6 -left-6 bg-gradient-warm p-6 shadow-elegant max-w-[240px] ring-1 ring-secondary/30 rounded-sm z-20">
-              <p className="text-[10px] uppercase tracking-[0.28em] font-bold mb-3 text-primary">
-                Featured Collection
-              </p>
-              <div className="relative h-14">
-                {luxuryHamperItems.map((hamper, idx) => (
-                  <p
+
+            {/* Corporate */}
+            <div className="flex flex-col gap-2">
+              <p className="text-[8px] tracking-[0.35em] uppercase font-bold text-primary/80 text-center">Corporate</p>
+              <a
+                href="/collections/hampers-corporate"
+                className="group relative block aspect-[3/4] w-full bg-gradient-warm ring-1 ring-primary/20 overflow-hidden shadow-elegant"
+              >
+                {corporateHamperItems.map((hamper, idx) => (
+                  <img
                     key={hamper.id}
-                    className={`absolute inset-0 text-base italic font-serif leading-snug text-foreground transition-opacity duration-1000 ${idx === currentHamperIdx ? "opacity-100 z-10" : "opacity-0 z-0 pointer-events-none"
-                      }`}
-                  >
-                    The {hamper.name}.
-                    <br />
-                    <span className="text-sm font-sans italic opacity-80">{hamper.unit || "Luxury Gift Hamper"}</span>
-                  </p>
+                    src={hamper.img}
+                    alt={hamper.name}
+                    className={`absolute inset-0 w-full h-full object-cover transition-all duration-1000 ${
+                      idx === currentCorporateIdx ? "opacity-100 z-10" : "opacity-0 z-0 pointer-events-none"
+                    }`}
+                  />
                 ))}
-              </div>
+                <div className="absolute bottom-0 inset-x-0 z-20 bg-gradient-to-t from-ink/70 to-transparent px-3 py-3">
+                  <div className="relative h-7 overflow-hidden">
+                    {corporateHamperItems.map((hamper, idx) => (
+                      <p key={hamper.id} className={`absolute inset-0 font-serif italic text-sm text-background leading-tight transition-all duration-700 ${
+                        idx === currentCorporateIdx ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"
+                      }`}>{hamper.name}</p>
+                    ))}
+                  </div>
+                  <div className="flex gap-1 mt-1">
+                    {corporateHamperItems.map((_, idx) => (
+                      <div key={idx} className={`h-[2px] flex-1 rounded-full transition-all duration-500 ${
+                        idx === currentCorporateIdx ? "bg-primary" : "bg-white/30"
+                      }`} />
+                    ))}
+                  </div>
+                </div>
+              </a>
             </div>
           </div>
+
         </div>
       </section>
 
@@ -269,7 +425,7 @@ function Index() {
           <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
             <div>
               <div className="mb-4">
-                <span className="inline-block text-[10px] tracking-[0.35em] uppercase font-semibold text-secondary border-b border-secondary/40 pb-2">
+                <span className="inline-block text-[10px] tracking-[0.35em] uppercase font-bold text-primary border-b border-primary/40 pb-2">
                   01 — Collections
                 </span>
               </div>
@@ -284,7 +440,7 @@ function Index() {
               className="group relative text-[11px] uppercase tracking-[0.25em] font-semibold text-foreground transition-colors duration-300 hover:text-primary"
             >
               Need help choosing? →
-              <span className="absolute -bottom-1 left-0 w-full h-[1px] bg-secondary scale-x-100 group-hover:bg-primary transition-colors duration-300" />
+              <span className="absolute -bottom-1 left-0 w-full h-[1px] bg-primary/40 scale-x-100 group-hover:bg-primary transition-colors duration-300" />
             </a>
           </div>
 
@@ -299,7 +455,7 @@ function Index() {
                   href={`/collections/${category.id}`}
                   className="group flex flex-col transition-all duration-300 ease-in-out hover:-translate-y-1"
                 >
-                  <div className="relative aspect-square bg-gradient-warm overflow-hidden mb-5 ring-1 ring-secondary/30 shadow-inner p-4 group-hover:shadow-elegant transition-all duration-300">
+                  <div className="relative aspect-square bg-gradient-warm overflow-hidden mb-5 ring-1 ring-primary/20 shadow-inner p-4 group-hover:shadow-elegant transition-all duration-300">
                     <img
                       src={category.items[0]?.img}
                       alt={category.title}
@@ -311,7 +467,7 @@ function Index() {
                     <h3 className="font-serif text-2xl text-foreground group-hover:text-primary transition-colors duration-300">
                       {category.title}
                     </h3>
-                    <span className="text-secondary transform transition-transform duration-300 group-hover:translate-x-1 group-hover:text-primary">
+                    <span className="text-primary/70 transform transition-transform duration-300 group-hover:translate-x-1 group-hover:text-primary">
                       →
                     </span>
                   </div>
@@ -334,7 +490,7 @@ function Index() {
                   href={`/collections/${category.id}`}
                   className="group flex flex-col transition-all duration-300 ease-in-out hover:-translate-y-1"
                 >
-                  <div className="relative aspect-square bg-gradient-warm overflow-hidden mb-5 ring-1 ring-secondary/30 shadow-inner p-4 group-hover:shadow-elegant transition-all duration-300">
+                  <div className="relative aspect-square bg-gradient-warm overflow-hidden mb-5 ring-1 ring-primary/20 shadow-inner p-4 group-hover:shadow-elegant transition-all duration-300">
                     <img
                       src={category.items[0]?.img}
                       alt={category.title}
@@ -346,7 +502,7 @@ function Index() {
                     <h3 className="font-serif text-2xl text-foreground group-hover:text-primary transition-colors duration-300">
                       {category.title}
                     </h3>
-                    <span className="text-secondary transform transition-transform duration-300 group-hover:translate-x-1 group-hover:text-primary">
+                    <span className="text-primary/70 transform transition-transform duration-300 group-hover:translate-x-1 group-hover:text-primary">
                       →
                     </span>
                   </div>
@@ -382,7 +538,7 @@ function Index() {
 
           <div className="order-1 md:order-2 space-y-6">
             <div className="mb-2">
-              <span className="inline-block text-[10px] tracking-[0.35em] uppercase font-semibold text-secondary border-b border-secondary/40 pb-2">
+              <span className="inline-block text-[10px] tracking-[0.35em] uppercase font-bold text-primary border-b border-primary/40 pb-2">
                 02 — Our Heritage
               </span>
             </div>
@@ -439,7 +595,7 @@ function Index() {
         <div className="max-w-7xl mx-auto mt-16 lg:mt-20">
           <div className="text-center space-y-3 mb-16">
             <div className="mb-6">
-              <span className="inline-block text-[10px] tracking-[0.35em] uppercase font-semibold text-secondary border-b border-secondary/40 pb-2">
+              <span className="inline-block text-[10px] tracking-[0.35em] uppercase font-bold text-primary border-b border-primary/40 pb-2">
                 Leadership
               </span>
             </div>

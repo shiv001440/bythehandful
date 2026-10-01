@@ -50,7 +50,7 @@ function ProductCard({ p, onAdd }: { p: any; i?: number; onAdd: (p: any) => void
           <div className="absolute inset-0 bg-ink/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           <button
             onClick={handleAdd}
-            className="absolute bottom-4 left-1/2 -translate-x-1/2 translate-y-10 opacity-0 bg-primary text-secondary px-6 py-3 text-[10px] uppercase font-bold tracking-[0.2em] shadow-lg transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 hover:bg-primary/90 hover:text-accent"
+            className="absolute bottom-4 left-1/2 -translate-x-1/2 translate-y-10 opacity-0 bg-primary text-primary-foreground px-6 py-3 text-[10px] uppercase font-bold tracking-[0.2em] shadow-lg transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 hover:bg-primary/90 hover:text-white"
           >
             Add to Pouch
           </button>
@@ -92,7 +92,7 @@ function ProductCard({ p, onAdd }: { p: any; i?: number; onAdd: (p: any) => void
       </div>
       <button
         onClick={handleAdd}
-        className="md:hidden mx-1 mt-3 py-2.5 border border-primary/20 text-[9px] font-semibold tracking-[0.2em] uppercase text-primary hover:bg-primary hover:text-secondary transition"
+        className="md:hidden mx-1 mt-3 py-2.5 border border-primary/20 text-[9px] font-semibold tracking-[0.2em] uppercase text-primary hover:bg-primary hover:text-primary-foreground transition"
       >
         Add to pouch
       </button>
@@ -143,9 +143,9 @@ function CollectionPage() {
         </section>
 
         {/* PRODUCTS GRID */}
-        <section className="py-20 px-6 md:px-12">
+        <section className="pt-8 pb-16 px-6 md:px-12">
           <div className="max-w-7xl mx-auto">
-            <div className="mb-10 text-[11px] uppercase tracking-[0.2em] font-semibold text-secondary border-b border-secondary/20 pb-6">
+            <div className="mb-10 text-[11px] uppercase tracking-[0.2em] font-semibold text-foreground/60 border-b border-black/8 pb-4">
               <span>{category.items.length} Products</span>
             </div>
 
