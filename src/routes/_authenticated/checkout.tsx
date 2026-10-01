@@ -7,6 +7,7 @@ import { useRazorpay, type RazorpayOrderOptions } from "react-razorpay";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { cn } from "@/lib/utils";
+import { getProductPacketUnit, getCleanProductName } from "@/lib/product-units";
 
 export const Route = createFileRoute("/_authenticated/checkout")({
   head: () => ({
@@ -509,17 +510,30 @@ function Checkout() {
                   <h2 className="font-serif text-2xl italic mb-6">Order Summary</h2>
 
                   <div className="space-y-4 mb-6 divide-y divide-black/5">
-                    {items.map((item) => (
-                      <div key={item.id} className="pt-3 first:pt-0 flex justify-between text-sm">
-                        <span className="text-foreground/80">
-                          {item.name}{" "}
-                          <span className="text-foreground/50 text-xs">× {item.qty}</span>
-                        </span>
-                        <span className="font-medium">
-                          ₹{(item.price * item.qty).toLocaleString("en-IN")}
-                        </span>
-                      </div>
-                    ))}
+                    {items.map((item) => {
+                      const packetUnit = getProductPacketUnit(item);
+                      const cleanName = getCleanProductName(item.name);
+                      return (
+                        <div key={item.id} className="pt-3 first:pt-0 flex justify-between items-start text-sm">
+                          <div className="min-w-0 pr-3">
+                            <span className="text-foreground/80 font-medium block truncate">
+                              {cleanName}
+                            </span>
+                            <div className="flex items-center gap-1.5 mt-0.5">
+                              <span className="inline-flex items-center text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.2 bg-primary/10 text-primary border border-primary/20">
+                                {packetUnit}
+                              </span>
+                              <span className="text-foreground/50 text-xs">
+                                × {item.qty} {item.qty === 1 ? "packet" : "packets"}
+                              </span>
+                            </div>
+                          </div>
+                          <span className="font-medium shrink-0 pt-0.5">
+                            ₹{(item.price * item.qty).toLocaleString("en-IN")}
+                          </span>
+                        </div>
+                      );
+                    })}
                   </div>
 
                   <div className="border-t border-black/10 pt-4 space-y-2.5 text-sm">

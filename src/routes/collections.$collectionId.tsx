@@ -116,7 +116,7 @@ function CollectionPage() {
   const currentItems = category.items.slice((page - 1) * itemsPerPage, page * itemsPerPage);
 
   const onAdd = (p: Product) => {
-    add({ id: p.id, name: p.name, origin: p.origin, price: p.price, img: p.img });
+    add({ id: p.id, name: p.name, origin: p.origin, price: p.price, img: p.img, unit: p.unit || "250g" });
     setOpen(true);
   };
 

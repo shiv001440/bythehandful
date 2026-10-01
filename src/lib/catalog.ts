@@ -105,6 +105,8 @@ import raisinPaanImg from "@/assets/raisin/raisin-paan.jpeg";
 import munakkaImg from "@/assets/raisin/munakka.jpeg";
 import raisinsPlainImg from "@/assets/raisin/raisins.jpeg";
 import roseMalaiKishmishImg from "@/assets/raisin/rose-malai-kishmish.jpeg";
+import blackRaisinImg from "@/assets/raisin/black-raisin.jpeg";
+import mangoRaisinImg from "@/assets/raisin/mango-raisin.jpeg";
 // Walnuts
 import walnutChilleImg from "@/assets/walnut/walnut-chille.jpeg";
 import walnutShellImg from "@/assets/walnut/walnut-shell.jpeg";
@@ -737,17 +739,16 @@ const raisinsMenu: Product[] = [
       { idSuffix: "-500g", unit: "500g", price: (AUTHORITATIVE_PRODUCTS["raisins-kala-khatta"]?.price ? Math.round(AUTHORITATIVE_PRODUCTS["raisins-kala-khatta"].price / 2) : 0) },
     ],
   },
-  /*
   {
-    ...(AUTHORITATIVE_PRODUCTS["raisins-black-kali-darak"] || { id: "raisins-black-kali-darak", name: "raisins-black-kali-darak", price: 0 }),
-    img: kishmishImg,
+    ...(AUTHORITATIVE_PRODUCTS["raisins-black-kali-darak"] || { id: "raisins-black-kali-darak", name: "Black Raisin - Kaali Darak", price: 0 }),
+    name: "Black Raisin - Kaali Darak",
+    img: blackRaisinImg,
     unit: "250g",
     variants: [
       { idSuffix: "-250g", unit: "250g", price: (AUTHORITATIVE_PRODUCTS["raisins-black-kali-darak"]?.price ? Math.round(AUTHORITATIVE_PRODUCTS["raisins-black-kali-darak"].price / 4) : 0) },
       { idSuffix: "-500g", unit: "500g", price: (AUTHORITATIVE_PRODUCTS["raisins-black-kali-darak"]?.price ? Math.round(AUTHORITATIVE_PRODUCTS["raisins-black-kali-darak"].price / 2) : 0) },
     ],
   },
-  */
   {
     ...(AUTHORITATIVE_PRODUCTS["raisins-rose-malai"] || { id: "raisins-rose-malai", name: "raisins-rose-malai", price: 0 }),
     img: roseMalaiKishmishImg,
@@ -766,17 +767,16 @@ const raisinsMenu: Product[] = [
       { idSuffix: "-500g", unit: "500g", price: (AUTHORITATIVE_PRODUCTS["raisins-munakka"]?.price ? Math.round(AUTHORITATIVE_PRODUCTS["raisins-munakka"].price / 2) : 0) },
     ],
   },
-  /*
   {
-    ...(AUTHORITATIVE_PRODUCTS["raisins-mango-kishmish"] || { id: "raisins-mango-kishmish", name: "raisins-mango-kishmish", price: 0 }),
-    img: kishmishImg,
+    ...(AUTHORITATIVE_PRODUCTS["raisins-mango-kishmish"] || { id: "raisins-mango-kishmish", name: "Mango Raisin", price: 0 }),
+    name: "Mango Raisin",
+    img: mangoRaisinImg,
     unit: "250g",
     variants: [
       { idSuffix: "-250g", unit: "250g", price: (AUTHORITATIVE_PRODUCTS["raisins-mango-kishmish"]?.price ? Math.round(AUTHORITATIVE_PRODUCTS["raisins-mango-kishmish"].price / 4) : 0) },
       { idSuffix: "-500g", unit: "500g", price: (AUTHORITATIVE_PRODUCTS["raisins-mango-kishmish"]?.price ? Math.round(AUTHORITATIVE_PRODUCTS["raisins-mango-kishmish"].price / 2) : 0) },
     ],
   },
-  */
 ];
 
 const walnutMenu: Product[] = [

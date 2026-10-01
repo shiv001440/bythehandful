@@ -66,6 +66,7 @@ RAISINS / KISHMISH
 - Raisins Plain (golden, sun-dried)
 - Paan Flavour Raisins, Kala Khatta Raisins
 - Rose Malai Kishmish, Munakka (large medicinal raisins — good for iron & digestion)
+- Black Raisin - Kaali Darak (seedless black grapes, antioxidant-rich, blood purification), Mango Raisin
 
 DATES
 - Medjoul Dates (large, premium — natural sugar, potassium-rich)

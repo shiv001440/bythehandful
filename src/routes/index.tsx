@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { AUTHORITATIVE_PRODUCTS } from "@/lib/products";
 import { createFileRoute } from "@tanstack/react-router";
-import heroImg from "@/assets/hero-3d-dryfruits.jpg";
 import heritageImg from "@/assets/heritage-family.jpg";
 import founder from "@/assets/founder-image.png";
 import cofounder from "@/assets/cofounder-image.jpeg";
@@ -106,7 +105,7 @@ function Index() {
   }, [corporateHamperItems.length]);
 
   const onAdd = (p: Product) => {
-    add({ id: p.id, name: p.name, origin: p.origin, price: p.price, img: p.img });
+    add({ id: p.id, name: p.name, origin: p.origin, price: p.price, img: p.img, unit: p.unit || "250g" });
     setOpen(true);
   };
 

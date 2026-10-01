@@ -1,26 +1,10 @@
-import almonds from "@/assets/product-almonds.jpg";
 import cashews from "@/assets/product-cashews.jpg";
-import pistachios from "@/assets/product-pistachios.jpg";
-import walnuts from "@/assets/product-walnuts.jpg";
-import dates from "@/assets/product-dates.jpg";
-import apricots from "@/assets/product-apricots.jpg";
-import kishmishImg from "@/assets/product-kishmish.jpg";
-import mixVegImg from "@/assets/product-mix-veg-masala.jpg";
-import paanKishmishImg from "@/assets/product-paan-kishmish.jpg";
-import paanDatesImg from "@/assets/product-paan-dates.jpg";
-import trailMix from "@/assets/trail-mix.jpeg";
-import chocoDip from "@/assets/choco-dip-almonds.jpeg";
-import blueberryAlmonds from "@/assets/blueberry-almonds.jpeg";
-import kajuThaiPuff from "@/assets/kaju-thai-puff.jpeg";
-import kajuPeriPeri from "@/assets/kaju-peri-peri.jpeg";
 import paanShots from "@/assets/special/paan-shots.jpeg";
 import anjeerImg from "@/assets/special/anjeer.jpeg";
 import fardDatesImg from "@/assets/special/fard-dates.jpeg";
 import medjoulDatesImg from "@/assets/special/medjoul-dates.jpeg";
 import medjoulDatesJumboImg from "@/assets/special/medjoul-dates-jumbo.jpeg";
 import paanMedjoulDatesImg from "@/assets/special/paan-mejoul-dates.jpeg";
-import khattaMeetha from "@/assets/breakfast-khatta-meetha.jpeg";
-import panchrattan from "@/assets/panchrattan.jpeg";
 import dryFruitLaddooImg from "@/assets/healthy-bites/dry-fruit-laddoo.jpeg";
 // Luxury Hampers
 import roseateGraceImg from "@/assets/luxury-hampers/roseate-grace.png";
@@ -45,6 +29,19 @@ import mintMahalImg from "@/assets/corporate-hampers/mint-mahal.png";
 import royalHeritageImg from "@/assets/corporate-hampers/the-royal-heritage.png";
 import regalTrioImg from "@/assets/corporate-hampers/the-regal-trio.png";
 import blueDynastyImg from "@/assets/corporate-hampers/the-blue-dynasty.png";
+import peacockBlushImg from "@/assets/corporate-hampers/the-peacock-blush.png";
+import navyDynastyImg from "@/assets/corporate-hampers/navy-dynasty.png";
+import midnightBasketImg from "@/assets/corporate-hampers/the-midnight-basket.png";
+import thePeachAffairImg from "@/assets/luxury-hampers/the-peach-affair.png";
+import oliveGardenImg from "@/assets/luxury-hampers/olive-garden.png";
+import lavenderOpulenceImg from "@/assets/luxury-hampers/lavender-opulence.png";
+import theSilverHeirloomImg from "@/assets/luxury-hampers/the-silver-heirloom.png";
+import theRoyalDynastyImg from "@/assets/luxury-hampers/the-royal-dynasty.png";
+import circleOfAbundanceImg from "@/assets/luxury-hampers/circle-of-abundance.png";
+import thePearlGardenImg from "@/assets/luxury-hampers/the-pearl-garden.png";
+import theSilverMajesticImg from "@/assets/luxury-hampers/the-silver-majestic.png";
+import moonstoneCharmImg from "@/assets/luxury-hampers/moonstone-charm.png";
+import lilacGraceImg from "@/assets/luxury-hampers/lilac-grace.png";
 // Exotic Nuts
 import brazilNutsImg from "@/assets/exotic-nuts/brazil-nuts.jpeg";
 import macadamiaNutsImg from "@/assets/exotic-nuts/macadamia-nuts.jpeg";
@@ -95,6 +92,8 @@ import raisinPaanImg from "@/assets/raisin/raisin-paan.jpeg";
 import munakkaImg from "@/assets/raisin/munakka.jpeg";
 import raisinsPlainImg from "@/assets/raisin/raisins.jpeg";
 import roseMalaiKishmishImg from "@/assets/raisin/rose-malai-kishmish.jpeg";
+import blackRaisinImg from "@/assets/raisin/black-raisin.jpeg";
+import mangoRaisinImg from "@/assets/raisin/mango-raisin.jpeg";
 // Walnuts
 import walnutChilleImg from "@/assets/walnut/walnut-chille.jpeg";
 import walnutShellImg from "@/assets/walnut/walnut-shell.jpeg";
@@ -117,24 +116,7 @@ import sanoraAlmondImg from "@/assets/almond/sanora-almond.jpeg";
 import pistaShellImg from "@/assets/pista/pista-shell.jpeg";
 export const PRODUCT_IMAGE_MAP: Record<string, string> = {
   kaju: cashews,
-  badam: almonds,
-  kishmish: kishmishImg,
-  akrot: walnuts,
-  pista: pistachios,
-  "medjoul-dates": dates,
-  apricots: apricots,
-  "breakfast-khatta-meetha": khattaMeetha,
-  "mix-vegetable-masala": mixVegImg,
-  "kaju-thai-puff": kajuThaiPuff,
-  "trail-mix": trailMix,
-  "peri-peri-kaju": kajuPeriPeri,
-  panchrattan: panchrattan,
   "hb-dry-fruit-laddoo": dryFruitLaddooImg,
-  "paan-kishmish": paanKishmishImg,
-  "blueberry-almond": blueberryAlmonds,
-  "paan-shots": paanShots,
-  "paan-dates": paanDatesImg,
-  "choco-dip-almonds": chocoDip,
   // Corporate Hampers
   "ivory-bloom": ivoryBloomImg,
   "noor-mahal": noorMahalImg,
@@ -143,6 +125,9 @@ export const PRODUCT_IMAGE_MAP: Record<string, string> = {
   "the-royal-heritage": royalHeritageImg,
   "the-regal-trio": regalTrioImg,
   "the-blue-dynasty": blueDynastyImg,
+  "the-peacock-blush": peacockBlushImg,
+  "navy-dynasty": navyDynastyImg,
+  "the-midnight-basket": midnightBasketImg,
   // Luxury Hampers
   "roseate-grace": roseateGraceImg,
   "amethyst-elegance": amethystEleganceImg,
@@ -158,6 +143,21 @@ export const PRODUCT_IMAGE_MAP: Record<string, string> = {
   "luxe-royale": luxeRoyaleImg,
   "gajraj-grandeur": gajrajGrandeurImg,
   "maroon-majesty": maroonMajestyImg,
+  "the-peach-affair": thePeachAffairImg,
+  "olive-garden": oliveGardenImg,
+  "lavender-opulence": lavenderOpulenceImg,
+  "the-silver-heirloom": theSilverHeirloomImg,
+  "the-royal-dynasty": theRoyalDynastyImg,
+  "circle-of-abundance": circleOfAbundanceImg,
+  "the-pearl-garden": thePearlGardenImg,
+  "the-silver-majestic": theSilverMajesticImg,
+  "moonstone-charm": moonstoneCharmImg,
+  "lilac-grace": lilacGraceImg,
+  // Wedding Hampers
+  "shehnai-silver-casket": shagunENoorImg,
+  "maharaja-vivah-hamper": gajrajRoyaleImg,
+  "gulab-shagun-potli-box": roseateGraceImg,
+  "ananta-wedding-casket": silverEmpressImg,
   // Exotic Nuts
   "exotic-brazil-nuts": brazilNutsImg,
   "exotic-pine-nuts-without-shell": pineNutsImg,
@@ -237,6 +237,34 @@ export const PRODUCT_IMAGE_MAP: Record<string, string> = {
   "special-dates-paan": paanMedjoulDatesImg,
   "special-dates-dryfruit": medjoulDatesImg,
   "special-paanshots": paanShots,
+  "cashew-w180": cashew210Img,
+  "cashew-4-tukda": cashew2TukdaImg,
+  "cashew-herb-cheese": cashewBreakfastKhattaMeethaImg,
+  "cashew-masala": cashewPeriPeriImg,
+  "raisins-black-kali-darak": blackRaisinImg,
+  "raisins-mango-kishmish": mangoRaisinImg,
+  "walnuts-tukde": walnutChilleImg,
+  "saffron-indian-kesar": cashew210Img,
+  "saffron-afghani-kesar": cashew210Img,
+  "exotic-pine-nuts-shell": pineNutsImg,
+  "exotic-tiger-nut": hazelnutImg,
+  "special-cardamom-8mm-bold": almondThaiPuffImg,
+  "special-silver-cardamom": almondThaiPuffImg,
+  "special-dry-dates": medjoulDatesImg,
+  "special-khurbani": medjoulDatesImg,
+  "special-amla-candy": pistaShellImg,
+  "special-paan-khajoor-box": pistaShellImg,
+  "special-amla-muraba-1kg": medjoulDatesImg,
+  "hb-granola-bites": fruitAndNutMuesliImg,
+  "hb-stone-chocolate": chocolateAlmondImg,
+  "hb-mixed-vegetable-masala": raisinKalaKhattaImg,
+  "hb-dried-fruit-masala": mixFruitChatpataImg,
+  "flavoured-brownie-almonds": chocolateAlmondImg,
+  "flavoured-gur-saunf-almonds": roastedAlmondImg,
+  "flavoured-rasmalai-almonds": kulfiAlmondImg,
+  "pista-without-shell": pistaShellImg,
+  "seeds-quinoa": chiaSeedsImg,
+  "seeds-watermelon": melonSeedsImg,
 };
 
 /**
@@ -248,32 +276,37 @@ export function getProductImage(
   imageUrl?: string | null,
   name?: string | null,
 ): string {
+  // 1. Direct match by productId
   if (productId && PRODUCT_IMAGE_MAP[productId]) {
     return PRODUCT_IMAGE_MAP[productId];
   }
 
-  // If a valid remote image URL or production asset URL is passed and it's not a dev path
-  if (
-    imageUrl &&
-    !imageUrl.startsWith("/src/assets/") &&
-    (imageUrl.startsWith("http://") ||
-      imageUrl.startsWith("https://") ||
-      imageUrl.startsWith("data:") ||
-      imageUrl.startsWith("/assets/"))
-  ) {
+  // 1b. Match by stripping variant suffix (e.g. -250g, -500g, -1kg, -100g, -200g, -50g, -1g, -2g, -5g)
+  if (productId) {
+    const baseId = productId.replace(/-(?:250g|500g|1kg|100g|200g|50g|1g|2g|5g)$/i, "");
+    if (PRODUCT_IMAGE_MAP[baseId]) {
+      return PRODUCT_IMAGE_MAP[baseId];
+    }
+  }
+
+  // 2. Direct imageUrl from card (in dev /src/assets/... is valid; in prod /assets/... is valid)
+  const isInvalidDevPathInProd =
+    import.meta.env.PROD && imageUrl && imageUrl.startsWith("/src/assets/");
+  if (imageUrl && !isInvalidDevPathInProd) {
     return imageUrl;
   }
 
-  // Fallback by name lookup if product_id is missing or doesn't match directly
+  // 3. Fallback by name lookup if product_id is missing or doesn't match directly
   if (name) {
     const lower = name.toLowerCase();
     for (const [key, asset] of Object.entries(PRODUCT_IMAGE_MAP)) {
-      if (lower.includes(key.replace(/-/g, " ")) || key.replace(/-/g, " ").includes(lower)) {
+      const cleanKey = key.replace(/-/g, " ");
+      if (lower === cleanKey || lower.startsWith(cleanKey) || cleanKey.startsWith(lower)) {
         return asset;
       }
     }
   }
 
-  // Default fallback image
+  // 4. Default fallback image
   return cashews;
 }

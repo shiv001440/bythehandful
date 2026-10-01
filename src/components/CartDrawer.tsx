@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useCart } from "@/lib/cart";
 import { getProductImage } from "@/lib/product-images";
+import { getProductPacketUnit, getCleanProductName } from "@/lib/product-units";
 
 function fmt(n: number) {
   return `₹${n.toLocaleString("en-IN")}`;
@@ -8,6 +9,7 @@ function fmt(n: number) {
 
 export function CartDrawer() {
   const { items, isOpen, setOpen, setQty, remove, subtotal, clear } = useCart();
+  const totalPackets = items.reduce((sum, i) => sum + i.qty, 0);
 
   return (
     <>
@@ -24,8 +26,13 @@ export function CartDrawer() {
         <header className="flex items-center justify-between px-6 h-16 border-b border-border">
           <div>
             <p className="text-[10px] tracking-[0.25em] uppercase text-foreground/55">Your Pouch</p>
-            <p className="font-serif text-xl italic">
-              {items.length} {items.length === 1 ? "selection" : "selections"}
+            <p className="font-serif text-xl italic flex items-baseline gap-2">
+              <span>{items.length} {items.length === 1 ? "selection" : "selections"}</span>
+              {totalPackets > 0 && (
+                <span className="text-xs font-sans font-normal text-foreground/50 not-italic">
+                  ({totalPackets} {totalPackets === 1 ? "packet" : "packets"})
+                </span>
+              )}
             </p>
           </div>
           <button
@@ -70,50 +77,69 @@ export function CartDrawer() {
             </div>
           ) : (
             <ul className="divide-y divide-border">
-              {items.map((it) => (
-                <li key={it.id} className="py-5 flex gap-4">
-                  <img
-                    src={getProductImage(it.id, it.img, it.name)}
-                    alt={it.name}
-                    className="size-20 rounded-lg object-cover bg-secondary"
-                  />
-                  <div className="flex-1 min-w-0">
-                    <div className="flex justify-between gap-2">
-                      <p className="font-serif text-lg leading-tight truncate">{it.name}</p>
-                      <button
-                        onClick={() => remove(it.id)}
-                        aria-label="Remove"
-                        className="text-foreground/45 hover:text-primary text-xs"
-                      >
-                        Remove
-                      </button>
-                    </div>
-                    <p className="text-[10px] tracking-[0.18em] uppercase text-foreground/55 mt-0.5">
-                      {it.origin}
-                    </p>
-                    <div className="mt-3 flex items-center justify-between">
-                      <div className="flex items-center ring-1 ring-border rounded-full">
+              {items.map((it) => {
+                const packetUnit = getProductPacketUnit(it);
+                const cleanName = getCleanProductName(it.name);
+                return (
+                  <li key={it.id} className="py-5 flex gap-4">
+                    <img
+                      src={it.img || getProductImage(it.id, it.img, it.name)}
+                      alt={cleanName}
+                      onError={(e) => {
+                        e.currentTarget.src = getProductImage(it.id, null, it.name);
+                      }}
+                      className="size-20 rounded-lg object-cover bg-secondary"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex justify-between gap-2">
+                        <p className="font-serif text-lg leading-tight truncate">{cleanName}</p>
                         <button
-                          onClick={() => setQty(it.id, it.qty - 1)}
-                          aria-label="Decrease"
-                          className="size-7 hover:bg-secondary rounded-full transition"
+                          onClick={() => remove(it.id)}
+                          aria-label="Remove"
+                          className="text-foreground/45 hover:text-primary text-xs"
                         >
-                          −
-                        </button>
-                        <span className="w-8 text-center text-sm tabular-nums">{it.qty}</span>
-                        <button
-                          onClick={() => setQty(it.id, it.qty + 1)}
-                          aria-label="Increase"
-                          className="size-7 hover:bg-secondary rounded-full transition"
-                        >
-                          +
+                          Remove
                         </button>
                       </div>
-                      <span className="text-sm font-medium">{fmt(it.price * it.qty)}</span>
+                      <div className="flex items-center gap-2 mt-1 flex-wrap">
+                        <span className="inline-flex items-center text-[10px] font-semibold tracking-wider uppercase px-2 py-0.5 rounded-xs bg-primary/10 text-primary border border-primary/20">
+                          Packet: {packetUnit}
+                        </span>
+                        {it.origin && (
+                          <span className="text-[10px] tracking-[0.15em] uppercase text-foreground/50 truncate">
+                            · {it.origin}
+                          </span>
+                        )}
+                      </div>
+                      <div className="mt-3 flex items-center justify-between">
+                        <div className="flex items-center ring-1 ring-border rounded-full">
+                          <button
+                            onClick={() => setQty(it.id, it.qty - 1)}
+                            aria-label="Decrease"
+                            className="size-7 hover:bg-secondary rounded-full transition"
+                          >
+                            −
+                          </button>
+                          <span className="w-8 text-center text-sm tabular-nums">{it.qty}</span>
+                          <button
+                            onClick={() => setQty(it.id, it.qty + 1)}
+                            aria-label="Increase"
+                            className="size-7 hover:bg-secondary rounded-full transition"
+                          >
+                            +
+                          </button>
+                        </div>
+                        <div className="text-right">
+                          <span className="text-sm font-medium">{fmt(it.price * it.qty)}</span>
+                          <p className="text-[10px] text-foreground/50 tabular-nums">
+                            {it.qty} × {packetUnit}
+                          </p>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </li>
-              ))}
+                  </li>
+                );
+              })}
             </ul>
           )}
         </div>

@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tansta
 import { useServerFn } from "@tanstack/react-start";
 import { listAllOrders, updateOrderStatus } from "@/lib/admin.functions";
 import { getProductImage } from "@/lib/product-images";
+import { getProductPacketUnit, getCleanProductName } from "@/lib/product-units";
 import {
   ChevronLeft,
   ChevronRight,
@@ -265,15 +266,20 @@ function AdminDashboard() {
                             <button
                               type="button"
                               onClick={() => setSelectedOrder(order)}
-                              className="inline-flex items-center gap-1.5 px-2.5 py-1 border border-black/15 bg-black/[0.03] hover:bg-primary/10 hover:border-primary/40 text-foreground text-[11px] font-medium transition cursor-pointer group"
+                              className="inline-flex flex-col items-start px-2.5 py-1.5 border border-black/15 bg-black/[0.03] hover:bg-primary/10 hover:border-primary/40 text-foreground transition cursor-pointer group"
                               title="Click to view ordered items and details"
                             >
-                              <Package className="size-3 text-foreground/50 group-hover:text-primary transition-colors" />
-                              <span>
-                                {order.order_items?.length || 0} item
-                                {(order.order_items?.length || 0) === 1 ? "" : "s"}
+                              <div className="flex items-center gap-1.5 text-[11px] font-medium">
+                                <Package className="size-3 text-foreground/50 group-hover:text-primary transition-colors" />
+                                <span>
+                                  {order.order_items?.length || 0} product
+                                  {(order.order_items?.length || 0) === 1 ? "" : "s"}
+                                </span>
+                                <Eye className="size-3 text-foreground/40 group-hover:text-primary transition-colors ml-0.5" />
+                              </div>
+                              <span className="text-[10px] text-foreground/50 font-mono mt-0.5">
+                                {order.order_items?.reduce((sum, it) => sum + it.quantity, 0) || 0} packets
                               </span>
-                              <Eye className="size-3 text-foreground/40 group-hover:text-primary transition-colors ml-0.5" />
                             </button>
                           </td>
                           <td className="px-5 py-4 font-serif text-base font-semibold">
@@ -542,10 +548,12 @@ function AdminDashboard() {
                       <Package className="size-3.5" /> Ordered Items (
                       {selectedOrder.order_items?.length || 0})
                     </p>
-                    <span className="text-xs text-foreground/60">
-                      Total Units:{" "}
-                      {selectedOrder.order_items?.reduce((sum, item) => sum + item.quantity, 0) ||
-                        0}
+                    <span className="text-xs text-foreground/60 font-medium">
+                      Total Packets:{" "}
+                      <span className="text-foreground font-semibold">
+                        {selectedOrder.order_items?.reduce((sum, item) => sum + item.quantity, 0) ||
+                          0}
+                      </span>
                     </span>
                   </div>
 
@@ -557,6 +565,8 @@ function AdminDashboard() {
                     <div className="border border-black/10 divide-y divide-black/5">
                       {selectedOrder.order_items.map((item) => {
                         const itemImg = getProductImage(item.product_id, item.image_url, item.name);
+                        const packetUnit = getProductPacketUnit(item);
+                        const cleanName = getCleanProductName(item.name);
                         return (
                           <div
                             key={item.id}
@@ -564,7 +574,7 @@ function AdminDashboard() {
                           >
                             <img
                               src={itemImg}
-                              alt={item.name}
+                              alt={cleanName}
                               className="size-14 object-cover border border-black/10 shrink-0 bg-secondary"
                               onError={(e) => {
                                 e.currentTarget.onerror = null;
@@ -573,23 +583,31 @@ function AdminDashboard() {
                             />
                             <div className="flex-1 min-w-0">
                               <p className="font-serif text-base text-foreground truncate">
-                                {item.name}
+                                {cleanName}
                               </p>
                               {item.origin && (
                                 <p className="text-[10px] tracking-[0.15em] uppercase text-foreground/50 truncate mt-0.5">
                                   {item.origin}
                                 </p>
                               )}
-                              <div className="flex items-center gap-3 mt-1 text-xs text-foreground/60">
-                                <span className="inline-flex items-center px-2 py-0.5 bg-black/5 text-[11px] font-medium">
-                                  Qty: {item.quantity}
+                              <div className="flex items-center gap-2 flex-wrap mt-1 text-xs">
+                                <span className="inline-flex items-center px-2 py-0.5 bg-primary/10 text-primary border border-primary/20 text-[10px] font-semibold uppercase tracking-wider">
+                                  Packet: {packetUnit}
                                 </span>
-                                <span>Unit: {fmt(item.unit_amount)}</span>
+                                <span className="inline-flex items-center px-2 py-0.5 bg-black/5 text-[11px] font-medium text-foreground">
+                                  Qty: {item.quantity} {item.quantity === 1 ? "packet" : "packets"}
+                                </span>
+                                <span className="text-foreground/60 text-xs">
+                                  Unit Price: {fmt(item.unit_amount)}
+                                </span>
                               </div>
                             </div>
                             <div className="text-right shrink-0">
                               <p className="font-serif text-base font-semibold">
                                 {fmt(item.line_total)}
+                              </p>
+                              <p className="text-[10px] text-foreground/45 mt-0.5">
+                                {item.quantity} × {packetUnit}
                               </p>
                             </div>
                           </div>

@@ -9,6 +9,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 
 import { getProductImage } from "@/lib/product-images";
+import { getProductPacketUnit, getCleanProductName } from "@/lib/product-units";
 
 export const Route = createFileRoute("/_authenticated/orders")({
   head: () => ({
@@ -145,16 +146,18 @@ function OrdersPage() {
                   {/* Line Items List */}
                   <div className="py-2">
                     <p className="text-[10px] tracking-[0.2em] uppercase text-foreground/50 font-bold pt-3 pb-1">
-                      Ordered Items ({totalItemsCount} {totalItemsCount === 1 ? "unit" : "units"})
+                      Ordered Items ({totalItemsCount} {totalItemsCount === 1 ? "packet" : "packets"})
                     </p>
                     <ul className="divide-y divide-black/5">
                       {o.order_items?.map((i) => {
                         const itemImg = getProductImage(i.product_id, i.image_url, i.name);
+                        const packetUnit = getProductPacketUnit(i);
+                        const cleanName = getCleanProductName(i.name);
                         return (
                           <li key={i.id} className="py-3.5 flex items-center gap-4">
                             <img
                               src={itemImg}
-                              alt={i.name}
+                              alt={cleanName}
                               className="size-14 object-cover border border-black/10 shrink-0 bg-secondary"
                               onError={(e) => {
                                 e.currentTarget.onerror = null;
@@ -163,27 +166,35 @@ function OrdersPage() {
                             />
                             <div className="flex-1 min-w-0">
                               <p className="font-serif text-base truncate text-foreground">
-                                {i.name}
+                                {cleanName}
                               </p>
                               {i.origin && (
                                 <p className="text-[10px] tracking-[0.15em] uppercase text-foreground/50 truncate mt-0.5">
                                   {i.origin}
                                 </p>
                               )}
-                              <p className="text-xs text-foreground/60 mt-1">
+                              <div className="flex items-center gap-2 flex-wrap mt-1 text-xs">
+                                <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-semibold tracking-wider uppercase bg-primary/10 text-primary border border-primary/20">
+                                  Packet: {packetUnit}
+                                </span>
                                 <span className="font-medium text-foreground">
-                                  Qty: {i.quantity}
+                                  Qty: {i.quantity} {i.quantity === 1 ? "packet" : "packets"}
                                 </span>
                                 {i.unit_amount > 0 && (
-                                  <span className="text-foreground/45 ml-2">
-                                    ({fmt(i.unit_amount)} each)
+                                  <span className="text-foreground/45">
+                                    ({fmt(i.unit_amount)} / packet)
                                   </span>
                                 )}
-                              </p>
+                              </div>
                             </div>
-                            <span className="text-sm font-serif font-semibold shrink-0">
-                              {fmt(i.line_total)}
-                            </span>
+                            <div className="text-right shrink-0">
+                              <span className="text-sm font-serif font-semibold block">
+                                {fmt(i.line_total)}
+                              </span>
+                              <span className="text-[10px] text-foreground/45 block mt-0.5">
+                                {i.quantity} × {packetUnit}
+                              </span>
+                            </div>
                           </li>
                         );
                       })}
