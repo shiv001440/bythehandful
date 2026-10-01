@@ -53,9 +53,11 @@ export function HealthAdvisor() {
     <section id="advisor" className="py-28 px-6 bg-secondary/40 border-y border-border">
       <div className="max-w-5xl mx-auto">
         <div className="text-center space-y-4 mb-12">
-          <span className="text-[11px] tracking-[0.25em] uppercase text-primary font-semibold">
-            Personal Pairing
-          </span>
+          <div>
+            <span className="inline-block text-[10px] tracking-[0.35em] uppercase font-bold text-primary border-b border-primary/40 pb-2">
+              03 — Personal Pairing
+            </span>
+          </div>
           <h2 className="font-serif text-4xl md:text-5xl italic leading-tight text-balance">
             Upload your medical report.
             <br />

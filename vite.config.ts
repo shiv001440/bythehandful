@@ -9,6 +9,7 @@ export default defineConfig({
   plugins: [
     tanstackStart({
       server: { entry: "server" },
+      client: { entry: "src/client.tsx" },
     }),
     react(),
     tsConfigPaths(),

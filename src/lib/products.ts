@@ -695,7 +695,7 @@ export const AUTHORITATIVE_PRODUCTS: Record<string, AuthoritativeProduct> = {
   },
   "raisins-black-kali-darak": {
     id: "raisins-black-kali-darak",
-    name: "Raisins Black (Kali Darak)",
+    name: "Black Raisin - Kaali Darak",
     origin: "Seedless Black Grapes · Antioxidant Rich",
     price: 750,
     category: "raisins",
@@ -716,7 +716,7 @@ export const AUTHORITATIVE_PRODUCTS: Record<string, AuthoritativeProduct> = {
   },
   "raisins-mango-kishmish": {
     id: "raisins-mango-kishmish",
-    name: "Mango Kishmish",
+    name: "Mango Raisin",
     origin: "Alphonso Mango Pulped Raisins",
     price: 1000,
     category: "raisins",
@@ -1218,7 +1218,32 @@ export async function calculateAuthoritativeOrderPricing(
 
     // Lookup authoritative price (DB first, then fallback to authoritative catalog)
     const dbProduct = dbPriceMap.get(item.id);
-    const catalogProduct = AUTHORITATIVE_PRODUCTS[item.id];
+    let catalogProduct = AUTHORITATIVE_PRODUCTS[item.id];
+
+    if (!dbProduct && !catalogProduct) {
+      // Check if it's a variant like baseId-250g, baseId-500g, etc.
+      const match = item.id.match(/^(.*?)-(250g|500g|100g|200g|50g|1kg|1g|2g|5g)$/);
+      if (match) {
+        const baseId = match[1];
+        const unit = match[2];
+        const baseProduct = AUTHORITATIVE_PRODUCTS[baseId];
+        if (baseProduct) {
+          let multiplier = 1;
+          if (unit === "250g") multiplier = 0.25;
+          else if (unit === "500g") multiplier = 0.5;
+          else if (unit === "100g") multiplier = 0.1;
+          else if (unit === "200g") multiplier = 0.2;
+          else if (unit === "50g") multiplier = 0.05;
+          else if (unit === "1kg") multiplier = 1.0;
+          catalogProduct = {
+            ...baseProduct,
+            id: item.id,
+            name: `${baseProduct.name} (${unit})`,
+            price: Math.round(baseProduct.price * multiplier),
+          };
+        }
+      }
+    }
 
     if (!dbProduct && !catalogProduct) {
       throw new Error(`Product '${item.id}' does not exist in the authoritative catalog.`);

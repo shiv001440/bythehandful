@@ -29,38 +29,85 @@ export const analyzeReport = createServerFn({ method: "POST" })
     const userContent: Array<Record<string, unknown>> = [
       {
         type: "text",
-        text: `You are a nutrition assistant for a premium dry fruit brand "By the Handful". Based on the following medical report${data.notes ? ` and user notes: "${data.notes}"` : ""}, suggest 4-6 dry fruits/nuts from this catalogue that would suit the person's health profile: 
-        Dry fruits 
-        1) Kaju 
-        2) Badam 
-        3) Kishmish 
-        4). Akrot 
-        5). Pista 
-        6). Medjoul dates 
+        text: `You are a nutrition assistant for a premium dry fruit brand "By the Handful". Based on the following medical report${data.notes ? ` and user notes: "${data.notes}"` : ""}, suggest 4-6 products from our catalogue that best suit the person's health profile.
 
-        Flavoured 
-        1). Breakfast khatta meetha 
-        2) mix vegetables masala 
-        3). Almond Thai puff 
-        4)  Trail mix 
-        5). Per peri kaju 
-        6). Nutcracker 
-        7). Paan kishmish 
-        8). Blueberry Almond 
-        9).  Paan shots
-        10).  Paan dates
+CATALOGUE:
 
-        Return STRICT JSON only, no markdown, with this shape:
-        {
-          "summary": "1-2 sentence plain-language summary of key health signals",
-          "recommendations": [
-            { "name": "...", "reason": "1 sentence why", "serving": "e.g. 25g / 5-6 pieces a day" }
-          ],
-          "avoid": ["short list of things to limit, if any"],
-          "disclaimer": "Educational suggestion, not medical advice. Consult your doctor."
-        }
+ALMONDS (plain)
+- California Almonds (standard grade, versatile)
+- Sanora Almonds (larger California variety)
+- Mamra Almonds (Indian, high oil content, superior nutrition)
+- Gurbandi Almonds (wild Afghan, small & nutrient-dense)
+- Roasted Almonds (dry-roasted, no oil)
 
-        Report:
+FLAVOURED ALMONDS
+- Blueberry Almonds, Chocolate Almonds, Paan Almonds
+- Almond Thai Puff, Rainbow Almonds, Barbeque Almonds
+- Rose Almonds, Pudina Almonds, Kulfi Almonds
+- Kali Mirch (Black Pepper) Almonds
+
+PISTACHIO
+- Roasted Salted Pistachio (in shell)
+
+CASHEW NUT (plain)
+- Cashew W-320 (standard whole), W-240, W-210, 2-Tukda (split)
+- Roasted Salted Cashew
+
+FLAVOURED CASHEW
+- Peri Peri Cashew, Nut Cracker Cashew, Kaju Thai Puff
+- Breakfast Khatta Meetha, Panchratna Mixture, Paan Cashew
+- Pudina Cashew, Kali Mirch Cashew, Korean Chilli Cashew
+- Masala Cashew, Peri Peri Kaju (extra spicy)
+
+WALNUT
+- Walnut Chille (in shell, Kashmiri Kagzi — high Omega-3)
+
+RAISINS / KISHMISH
+- Raisins Plain (golden, sun-dried)
+- Paan Flavour Raisins, Kala Khatta Raisins
+- Rose Malai Kishmish, Munakka (large medicinal raisins — good for iron & digestion)
+- Black Raisin - Kaali Darak (seedless black grapes, antioxidant-rich, blood purification), Mango Raisin
+
+DATES
+- Medjoul Dates (large, premium — natural sugar, potassium-rich)
+- Medjoul Dates Jumbo
+- Fard Dates (smaller, fibre-rich)
+- Paan Medjoul Dates (flavoured)
+
+DRIED / DEHYDRATED FRUITS
+- Dried Blueberry (antioxidants), Dried Cranberry (urinary health)
+- Dried Cherry, Dried Strawberry, Dried Apricot (iron, beta-carotene)
+- Prunes (digestion, bone health), Black Currant (Vitamin C)
+- Mango Slices, Pineapple Coin, Kiwi Coin
+- Mixed Berries, Fruit Cocktail, Mix Fruit Chatpata
+- Mix Fruit Milk Choco Dip, Fruit & Nut Muesli
+
+EXOTIC NUTS
+- Brazil Nuts (selenium — thyroid health), Macadamia Nuts (heart health)
+- Pecan Nuts (antioxidants), Pecan Vanilla (flavoured)
+- Pine Nuts (pine-ka-beja — weight management), Hazelnut (Vitamin E)
+
+SEEDS
+- Chia Seeds (Omega-3, fibre, calcium), Flax Seeds (lignans, Omega-3)
+- Pumpkin Seeds (zinc, magnesium), Sunflower Seeds (Vitamin E)
+- Melon Seeds (cooling, light protein), Mixed Seeds with Berries
+
+SPECIAL / UNIQUE
+- Anjeer / Dried Figs (iron, calcium, fibre — good for constipation & bone health)
+- Paan Shots (digestive, mouth-freshening blend)
+- Dry Fruit Laddoo (energy-dense, no refined sugar)
+
+Return STRICT JSON only, no markdown, with this shape:
+{
+  "summary": "1-2 sentence plain-language summary of key health signals",
+  "recommendations": [
+    { "name": "...", "reason": "1 sentence why this product suits their health profile", "serving": "e.g. 25g / 5-6 pieces a day" }
+  ],
+  "avoid": ["short list of products or ingredients to limit, if any"],
+  "disclaimer": "Educational suggestion, not medical advice. Consult your doctor."
+}
+
+Report:
 ${data.text || "(see attached image)"}`,
       },
     ];

@@ -5,17 +5,22 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * Design system definition.
+ * ╔══════════════════════════════════════════════════════════╗
+ * ║  BY THE HANDFUL — Heritage Luxury Design System          ║
+ * ║                                                          ║
+ * ║  Palette: Warm Ivory + 18-karat Gold + Espresso          ║
+ * ║  Inspired by heritage jewellery houses & gift maisons    ║
+ * ╚══════════════════════════════════════════════════════════╝
  *
- * The @theme inline block maps CSS custom properties to Tailwind utility
- * classes (e.g. --color-primary -> bg-primary, text-primary).
- *
- * The :root and .dark blocks define the actual color values using oklch.
- * All colors MUST use oklch format.
- *
- * To add a new semantic color:
- * 1. Add the variable to :root (light value) and .dark (dark value)
- * 2. Register it in @theme inline as --color-<name>: var(--<name>)
+ * Palette reference (visual):
+ *   --background   #FAF7F2  warm parchment ivory
+ *   --foreground   #1C1410  deep espresso brown-black
+ *   --primary      #B8860B  dark goldenrod — true 18k gold
+ *   --secondary    #F0EAD9  warm antique linen
+ *   --accent       #C8A951  bright polished gold highlight
+ *   --ink          #120E09  near-black chocolate
+ *   --amber        #D4A017  liquid gold, hover state
+ *   --burgundy     #5C1A28  deep jewel red — reserved accent
  */
 
 @theme inline {
@@ -26,6 +31,7 @@
   --radius-2xl: calc(var(--radius) + 8px);
   --radius-3xl: calc(var(--radius) + 12px);
   --radius-4xl: calc(var(--radius) + 16px);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -59,190 +65,255 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
-}
 
-:root {
-  --radius: 0.5rem;
-
-  /* Autumn Harvest — editorial heritage palette */
-  /* base cream #F9F7F2, ink #1A1A1A, primary rust #9b4423, gold #d4842a, amber #e8b84a, deep burgundy #5c2018 */
-  --background: oklch(0.972 0.012 84);
-  --foreground: oklch(0.22 0.01 60);
-  --card: oklch(0.985 0.008 84);
-  --card-foreground: oklch(0.22 0.01 60);
-  --popover: oklch(0.985 0.008 84);
-  --popover-foreground: oklch(0.22 0.01 60);
-  --primary: oklch(0.5 0.14 42);
-  --primary-foreground: oklch(0.985 0.008 84);
-  --secondary: oklch(0.945 0.012 78);
-  --secondary-foreground: oklch(0.22 0.01 60);
-  --muted: oklch(0.945 0.012 78);
-  --muted-foreground: oklch(0.45 0.02 60);
-  --accent: oklch(0.72 0.14 62);
-  --accent-foreground: oklch(0.22 0.01 60);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.984 0.003 247.858);
-  --border: oklch(0.22 0.01 60 / 0.1);
-  --input: oklch(0.22 0.01 60 / 0.14);
-  --ring: oklch(0.5 0.14 42);
-
-  --stone: oklch(0.945 0.012 78);
-  --ink: oklch(0.14 0.008 60);
-  --canvas: oklch(0.972 0.012 84);
-  --amber: oklch(0.78 0.14 76);
-  --burgundy: oklch(0.36 0.11 34);
-
-  --font-serif: "Cormorant Garamond", ui-serif, Georgia, serif;
-  --font-sans: "Karla", ui-sans-serif, system-ui, sans-serif;
-
-  --gradient-warm: linear-gradient(135deg, oklch(0.985 0.008 84) 0%, oklch(0.93 0.05 72) 100%);
-  --shadow-elegant: 0 30px 60px -20px oklch(0.22 0.01 60 / 0.22);
-
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0.008 84);
-  --sidebar-foreground: oklch(0.22 0.01 60);
-  --sidebar-primary: oklch(0.5 0.14 42);
-  --sidebar-primary-foreground: oklch(0.985 0.008 84);
-  --sidebar-accent: oklch(0.945 0.012 78);
-  --sidebar-accent-foreground: oklch(0.22 0.01 60);
-  --sidebar-border: oklch(0.22 0.01 60 / 0.1);
-  --sidebar-ring: oklch(0.5 0.14 42);
-}
-
-.dark {
-  --background: oklch(0.18 0.015 60);
-  --foreground: oklch(0.96 0.01 80);
-  --card: oklch(0.22 0.015 60);
-  --card-foreground: oklch(0.96 0.01 80);
-  --popover: oklch(0.22 0.015 60);
-  --popover-foreground: oklch(0.96 0.01 80);
-  --primary: oklch(0.62 0.17 40);
-  --primary-foreground: oklch(0.985 0.008 80);
-  --secondary: oklch(0.28 0.02 60);
-  --secondary-foreground: oklch(0.96 0.01 80);
-  --muted: oklch(0.28 0.02 60);
-  --muted-foreground: oklch(0.7 0.02 70);
-  --accent: oklch(0.62 0.17 40);
-  --accent-foreground: oklch(0.985 0.008 80);
-  --destructive: oklch(0.704 0.191 22.216);
-  --destructive-foreground: oklch(0.984 0.003 247.858);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.62 0.17 40);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.22 0.015 60);
-  --sidebar-foreground: oklch(0.96 0.01 80);
-  --sidebar-primary: oklch(0.62 0.17 40);
-  --sidebar-primary-foreground: oklch(0.985 0.008 80);
-  --sidebar-accent: oklch(0.28 0.02 60);
-  --sidebar-accent-foreground: oklch(0.96 0.01 80);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.62 0.17 40);
-}
-
-@theme inline {
+  /* ── Brand tokens ── */
   --color-stone: var(--stone);
   --color-ink: var(--ink);
   --color-canvas: var(--canvas);
   --color-amber: var(--amber);
   --color-burgundy: var(--burgundy);
+  --color-gold: var(--gold);
+
+  /* ── Typography ── */
   --font-serif: var(--font-serif);
   --font-sans: var(--font-sans);
 }
 
+/* ══════════════════════════════════════════════════════════
+   LIGHT MODE  (default — Warm Ivory Luxury)
+══════════════════════════════════════════════════════════ */
+:root {
+  --radius: 0rem; /* Sharp corners — jewellery house aesthetic */
+
+  /* Core surfaces */
+  --background:           oklch(0.974 0.011 82);   /* warm parchment ivory */
+  --foreground:           oklch(0.185 0.018 55);   /* deep espresso */
+  --card:                 oklch(0.985 0.008 80);
+  --card-foreground:      oklch(0.185 0.018 55);
+  --popover:              oklch(0.990 0.006 80);
+  --popover-foreground:   oklch(0.185 0.018 55);
+
+  /* Primary — 18-karat gold */
+  --primary:              oklch(0.58 0.13 72);     /* dark goldenrod */
+  --primary-foreground:   oklch(0.990 0.004 82);   /* ivory white text on gold */
+
+  /* Secondary — warm linen */
+  --secondary:            oklch(0.942 0.018 78);   /* antique linen */
+  --secondary-foreground: oklch(0.185 0.018 55);
+
+  /* Muted */
+  --muted:                oklch(0.942 0.018 78);
+  --muted-foreground:     oklch(0.48 0.025 60);
+
+  /* Accent — polished bright gold */
+  --accent:               oklch(0.70 0.145 76);
+  --accent-foreground:    oklch(0.185 0.018 55);
+
+  /* System */
+  --destructive:          oklch(0.577 0.245 27);
+  --destructive-foreground: oklch(0.984 0.003 248);
+  --border:               oklch(0.185 0.018 55 / 0.10);
+  --input:                oklch(0.185 0.018 55 / 0.12);
+  --ring:                 oklch(0.58 0.13 72);
+
+  /* ── Brand extras ── */
+  --stone:                oklch(0.942 0.018 78);
+  --ink:                  oklch(0.135 0.014 52);   /* near-black chocolate */
+  --canvas:               oklch(0.974 0.011 82);
+  --amber:                oklch(0.72 0.148 76);    /* liquid gold hover */
+  --gold:                 oklch(0.65 0.135 74);    /* polished gold mid */
+  --burgundy:             oklch(0.34 0.10 26);     /* deep jewel red */
+
+  /* ── Typography ── */
+  --font-serif: "Cormorant Garamond", ui-serif, Georgia, serif;
+  --font-sans:  "Karla", ui-sans-serif, system-ui, sans-serif;
+
+  /* ── Surfaces ── */
+  --gradient-warm: linear-gradient(
+    140deg,
+    oklch(0.990 0.006 80) 0%,
+    oklch(0.950 0.028 74) 50%,
+    oklch(0.935 0.035 70) 100%
+  );
+
+  /* Gold shimmer strip for hero/section accents */
+  --gradient-gold: linear-gradient(
+    90deg,
+    oklch(0.58 0.13 72 / 0) 0%,
+    oklch(0.65 0.135 74 / 0.25) 40%,
+    oklch(0.72 0.148 76 / 0.35) 60%,
+    oklch(0.58 0.13 72 / 0) 100%
+  );
+
+  /* ── Shadows ── */
+  --shadow-elegant: 0 24px 60px -16px oklch(0.135 0.014 52 / 0.18),
+                    0 4px 16px -4px   oklch(0.58 0.13 72 / 0.08);
+
+  /* Charts */
+  --chart-1: oklch(0.58 0.13 72);
+  --chart-2: oklch(0.60 0.118 185);
+  --chart-3: oklch(0.40 0.07 227);
+  --chart-4: oklch(0.72 0.148 76);
+  --chart-5: oklch(0.34 0.10 26);
+
+  /* Sidebar */
+  --sidebar:                  oklch(0.985 0.008 80);
+  --sidebar-foreground:       oklch(0.185 0.018 55);
+  --sidebar-primary:          oklch(0.58 0.13 72);
+  --sidebar-primary-foreground: oklch(0.990 0.004 82);
+  --sidebar-accent:           oklch(0.942 0.018 78);
+  --sidebar-accent-foreground: oklch(0.185 0.018 55);
+  --sidebar-border:           oklch(0.185 0.018 55 / 0.10);
+  --sidebar-ring:             oklch(0.58 0.13 72);
+}
+
+/* ══════════════════════════════════════════════════════════
+   DARK MODE  (deep espresso with gold)
+══════════════════════════════════════════════════════════ */
+.dark {
+  --background:           oklch(0.148 0.014 52);
+  --foreground:           oklch(0.960 0.012 82);
+  --card:                 oklch(0.188 0.016 52);
+  --card-foreground:      oklch(0.960 0.012 82);
+  --popover:              oklch(0.188 0.016 52);
+  --popover-foreground:   oklch(0.960 0.012 82);
+  --primary:              oklch(0.68 0.148 74);
+  --primary-foreground:   oklch(0.148 0.014 52);
+  --secondary:            oklch(0.24 0.018 55);
+  --secondary-foreground: oklch(0.960 0.012 82);
+  --muted:                oklch(0.24 0.018 55);
+  --muted-foreground:     oklch(0.68 0.025 72);
+  --accent:               oklch(0.72 0.148 76);
+  --accent-foreground:    oklch(0.148 0.014 52);
+  --destructive:          oklch(0.70 0.19 22);
+  --destructive-foreground: oklch(0.984 0.003 248);
+  --border:               oklch(1 0 0 / 8%);
+  --input:                oklch(1 0 0 / 12%);
+  --ring:                 oklch(0.68 0.148 74);
+  --chart-1: oklch(0.488 0.243 264);
+  --chart-2: oklch(0.696 0.17 162);
+  --chart-3: oklch(0.769 0.188 70);
+  --chart-4: oklch(0.627 0.265 304);
+  --chart-5: oklch(0.645 0.246 16);
+  --sidebar:                    oklch(0.188 0.016 52);
+  --sidebar-foreground:         oklch(0.960 0.012 82);
+  --sidebar-primary:            oklch(0.68 0.148 74);
+  --sidebar-primary-foreground: oklch(0.148 0.014 52);
+  --sidebar-accent:             oklch(0.24 0.018 55);
+  --sidebar-accent-foreground:  oklch(0.960 0.012 82);
+  --sidebar-border:             oklch(1 0 0 / 8%);
+  --sidebar-ring:               oklch(0.68 0.148 74);
+}
+
+/* ══════════════════════════════════════════════════════════
+   ANIMATIONS
+══════════════════════════════════════════════════════════ */
 @keyframes float-slow {
-  0%,
-  100% {
-    transform: translateY(0) rotate(0deg);
-  }
-  50% {
-    transform: translateY(-18px) rotate(1.5deg);
-  }
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50%       { transform: translateY(-18px) rotate(1.5deg); }
 }
 @keyframes reveal-up {
-  from {
-    opacity: 0;
-    transform: translateY(24px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 @keyframes drift-a {
-  0% {
-    transform: translate(0, 0) rotate(0deg);
-  }
-  50% {
-    transform: translate(30px, -40px) rotate(180deg);
-  }
-  100% {
-    transform: translate(0, 0) rotate(360deg);
-  }
+  0%   { transform: translate(0, 0) rotate(0deg); }
+  50%  { transform: translate(30px, -40px) rotate(180deg); }
+  100% { transform: translate(0, 0) rotate(360deg); }
 }
 @keyframes drift-b {
-  0% {
-    transform: translate(0, 0) rotate(0deg);
-  }
-  50% {
-    transform: translate(-40px, 30px) rotate(-160deg);
-  }
-  100% {
-    transform: translate(0, 0) rotate(-360deg);
-  }
+  0%   { transform: translate(0, 0) rotate(0deg); }
+  50%  { transform: translate(-40px, 30px) rotate(-160deg); }
+  100% { transform: translate(0, 0) rotate(-360deg); }
 }
 @keyframes drift-c {
-  0% {
-    transform: translate(0, 0) rotate(0deg) scale(1);
-  }
-  50% {
-    transform: translate(25px, 25px) rotate(140deg) scale(1.08);
-  }
-  100% {
-    transform: translate(0, 0) rotate(280deg) scale(1);
-  }
+  0%   { transform: translate(0, 0) rotate(0deg) scale(1); }
+  50%  { transform: translate(25px, 25px) rotate(140deg) scale(1.08); }
+  100% { transform: translate(0, 0) rotate(280deg) scale(1); }
+}
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
 }
 
-@utility animate-float-slow {
-  animation: float-slow 7s ease-in-out infinite;
-}
-@utility animate-reveal-up {
-  animation: reveal-up 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-@utility animate-drift-a {
-  animation: drift-a 22s ease-in-out infinite;
-}
-@utility animate-drift-b {
-  animation: drift-b 28s ease-in-out infinite;
-}
-@utility animate-drift-c {
-  animation: drift-c 32s ease-in-out infinite;
-}
+@utility animate-float-slow  { animation: float-slow 7s ease-in-out infinite; }
+@utility animate-reveal-up   { animation: reveal-up 0.9s cubic-bezier(0.16, 1, 0.3, 1) both; }
+@utility animate-drift-a     { animation: drift-a 22s ease-in-out infinite; }
+@utility animate-drift-b     { animation: drift-b 28s ease-in-out infinite; }
+@utility animate-drift-c     { animation: drift-c 32s ease-in-out infinite; }
+@utility animate-shimmer     { animation: shimmer 3s linear infinite; }
 
+/* ══════════════════════════════════════════════════════════
+   BASE RESETS & GLOBAL TYPOGRAPHY
+══════════════════════════════════════════════════════════ */
 @layer base {
   * {
     border-color: var(--color-border);
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
+    line-height: 1.6;
   }
 
-  h1,
-  h2,
-  h3,
-  h4 {
+  h1, h2, h3, h4, h5 {
     font-family: var(--font-serif);
     letter-spacing: -0.01em;
+    line-height: 1.1;
   }
+
+  /* Gold-tinted text selection */
+  ::selection {
+    background-color: oklch(0.72 0.148 76 / 0.28);
+    color: oklch(0.135 0.014 52);
+  }
+
+  /* Refined scrollbar */
+  ::-webkit-scrollbar       { width: 6px; }
+  ::-webkit-scrollbar-track { background: oklch(0.942 0.018 78); }
+  ::-webkit-scrollbar-thumb { background: oklch(0.58 0.13 72 / 0.45); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: oklch(0.58 0.13 72 / 0.75); }
+
+  /* Focus ring — gold */
+  :focus-visible {
+    outline: 2px solid oklch(0.58 0.13 72);
+    outline-offset: 3px;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   GLOBAL COMPONENT REFINEMENTS
+══════════════════════════════════════════════════════════ */
+
+/* Gold rule — use as <hr class="gold-rule"> */
+.gold-rule {
+  border: none;
+  height: 1px;
+  background: var(--gradient-gold);
+  margin: 0;
+}
+
+/* Shimmer text — for hero taglines */
+.text-shimmer {
+  background: linear-gradient(
+    90deg,
+    oklch(0.58 0.13 72) 0%,
+    oklch(0.72 0.148 76) 40%,
+    oklch(0.65 0.135 74) 60%,
+    oklch(0.58 0.13 72) 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 4s linear infinite;
 }

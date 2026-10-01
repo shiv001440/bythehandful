@@ -6,6 +6,7 @@ import { assertRateLimit, getClientIp } from "@/lib/rate-limiter";
 import Razorpay from "razorpay";
 import crypto from "crypto";
 import { z } from "zod";
+import { getProductPacketUnit } from "@/lib/product-units";
 
 export const CheckoutItemSchema = z
   .object({
@@ -15,6 +16,7 @@ export const CheckoutItemSchema = z
     img: z.string().trim().max(2000).optional(),
     price: z.number().nonnegative().max(1000000).optional(), // Client-submitted price is strictly ignored in calculations
     qty: z.number().int().positive("Quantity must be greater than 0").max(1000),
+    unit: z.string().trim().max(100).optional(),
   })
   .strict();
 
@@ -209,10 +211,25 @@ export const createRazorpayOrder = createServerFn({ method: "POST" })
       // Insert initial order items
       const orderItems = calculation.items.map((verifiedItem) => {
         const clientItem = items.find((i) => i.id === verifiedItem.id);
+        const packetUnit = getProductPacketUnit({
+          id: verifiedItem.id,
+          name: verifiedItem.name,
+          unit: clientItem?.unit,
+        });
+        let itemName = verifiedItem.name;
+        if (
+          !itemName.includes("(") &&
+          !itemName.toLowerCase().includes("hamper") &&
+          !itemName.toLowerCase().includes("chest") &&
+          !itemName.toLowerCase().includes("basket") &&
+          !itemName.toLowerCase().includes("box")
+        ) {
+          itemName = `${verifiedItem.name} (${packetUnit})`;
+        }
         return {
           order_id: dbOrder.id,
           product_id: verifiedItem.id,
-          name: verifiedItem.name,
+          name: itemName,
           origin: verifiedItem.origin,
           image_url: clientItem?.img,
           unit_amount: Math.round(verifiedItem.price * 100),
@@ -429,10 +446,25 @@ export const verifyRazorpayPayment = createServerFn({ method: "POST" })
       // Insert order items using authoritative unit amounts and names
       const orderItems = calculation.items.map((verifiedItem) => {
         const clientItem = items.find((i) => i.id === verifiedItem.id);
+        const packetUnit = getProductPacketUnit({
+          id: verifiedItem.id,
+          name: verifiedItem.name,
+          unit: clientItem?.unit,
+        });
+        let itemName = verifiedItem.name;
+        if (
+          !itemName.includes("(") &&
+          !itemName.toLowerCase().includes("hamper") &&
+          !itemName.toLowerCase().includes("chest") &&
+          !itemName.toLowerCase().includes("basket") &&
+          !itemName.toLowerCase().includes("box")
+        ) {
+          itemName = `${verifiedItem.name} (${packetUnit})`;
+        }
         return {
           order_id: newOrder.id,
           product_id: verifiedItem.id,
-          name: verifiedItem.name,
+          name: itemName,
           origin: verifiedItem.origin,
           image_url: clientItem?.img,
           unit_amount: Math.round(verifiedItem.price * 100),

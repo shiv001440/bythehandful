@@ -1,10 +1,10 @@
-const fs = require('fs');
+const fs = require("fs");
 
-const productsTsPath = './src/lib/products.ts';
-const migrationPath = './supabase/migrations/20260913180000_add_menu_catalog_products.sql';
+const productsTsPath = "./src/lib/products.ts";
+const migrationPath = "./supabase/migrations/20260913180000_add_menu_catalog_products.sql";
 
-const productsTsContent = fs.readFileSync(productsTsPath, 'utf8');
-const migrationContent = fs.readFileSync(migrationPath, 'utf8');
+const productsTsContent = fs.readFileSync(productsTsPath, "utf8");
+const migrationContent = fs.readFileSync(migrationPath, "utf8");
 
 // Parse products.ts
 const tsPrices = {};
