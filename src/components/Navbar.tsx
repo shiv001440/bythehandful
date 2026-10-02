@@ -218,15 +218,29 @@ export function Navbar() {
               </Link>
             )}
 
-            {/* Pouch */}
+            {/* Pouch — icon on mobile, text pill on desktop */}
             <button
               onClick={() => setOpen(true)}
               aria-label="Open pouch"
-              className="flex items-center gap-2 pl-3 pr-4 py-2 bg-primary text-primary-foreground hover:bg-amber transition-colors duration-200 active:scale-[0.98]"
+              className="relative flex items-center gap-2 pl-3 pr-4 py-2 bg-primary text-primary-foreground hover:bg-amber transition-colors duration-200 active:scale-[0.98]"
             >
-              <span className="text-[10px] tracking-[0.3em] uppercase font-bold">Pouch</span>
-              <span className="w-px h-3 bg-primary-foreground/30" />
-              <span className="font-serif italic text-base leading-none">{String(count).padStart(2, "0")}</span>
+              {/* Mobile: bag icon with count badge */}
+              <span className="md:hidden flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" x2="21" y1="6" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>
+                </svg>
+                {count > 0 && (
+                  <span className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] rounded-full bg-foreground text-background text-[9px] font-bold flex items-center justify-center px-1 leading-none">
+                    {count}
+                  </span>
+                )}
+              </span>
+              {/* Desktop: original text pill */}
+              <span className="hidden md:flex items-center gap-2">
+                <span className="text-[10px] tracking-[0.3em] uppercase font-bold">Pouch</span>
+                <span className="w-px h-3 bg-primary-foreground/30" />
+                <span className="font-serif italic text-base leading-none">{String(count).padStart(2, "0")}</span>
+              </span>
             </button>
 
           </div>
