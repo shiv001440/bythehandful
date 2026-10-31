@@ -107,6 +107,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "Premium, hand-picked dry fruits and nuts from heritage groves. No sulfites, no added sugar — just nature, by the handful.",
       },
       { name: "twitter:image", content: "https://bythehandful.com/og-image.jpg" },
+      { name: "google-site-verification", content: "IQF7iUOl1gWE9sXZn0Bu8p_iFKhvel3xb68S4_GmMdY" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
