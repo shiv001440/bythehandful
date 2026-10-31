@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /auth
+Disallow: /checkout
+Disallow: /orders
+
+Sitemap: https://bythehandful.com/sitemap.xml

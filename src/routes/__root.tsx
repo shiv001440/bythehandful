@@ -93,17 +93,26 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "Premium, hand-picked dry fruits and nuts from heritage groves. No sulfites, no added sugar — just nature, by the handful.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://bythehandful.com" },
+      { property: "og:site_name", content: "By The Handful" },
+      { property: "og:image", content: "https://bythehandful.com/og-image.jpg" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:site", content: "@bythehandful" },
       { name: "twitter:title", content: "By The Handful — Sun-cured dry fruits & nuts" },
       {
         name: "twitter:description",
         content:
           "Premium, hand-picked dry fruits and nuts from heritage groves. No sulfites, no added sugar — just nature, by the handful.",
       },
+      { name: "twitter:image", content: "https://bythehandful.com/og-image.jpg" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      { rel: "icon", href: "/src/assets/logo2.jpeg", type: "image/png" },
+      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
+      { rel: "canonical", href: "https://bythehandful.com" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
@@ -119,10 +128,38 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 });
 
 function RootShell({ children }: { children: ReactNode }) {
+  const orgSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "By The Handful",
+    url: "https://bythehandful.com",
+    logo: "https://bythehandful.com/apple-touch-icon.png",
+    foundingDate: "1923",
+    description:
+      "Premium sun-cured dry fruits, exotic nuts, saffron, and luxury artisanal gift hampers — established 1923.",
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: "Delhi",
+      addressCountry: "IN",
+    },
+    contactPoint: {
+      "@type": "ContactPoint",
+      contactType: "customer service",
+      availableLanguage: ["English", "Hindi"],
+    },
+    sameAs: [
+      "https://www.instagram.com/bythehandful",
+    ],
+  };
+
   return (
     <html lang="en">
       <head>
         <HeadContent />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
+        />
       </head>
       <body>
         {children}
