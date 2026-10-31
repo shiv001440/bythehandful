@@ -23,12 +23,33 @@ export const Route = createFileRoute("/collections/$collectionId")({
     }
     return { category };
   },
-  head: ({ loaderData }) => ({
-    meta: [
-      { title: `${loaderData?.category.title || "Collection"} — By The Handful` },
-      { name: "description", content: loaderData?.category.tagline },
-    ],
-  }),
+  head: ({ loaderData }) => {
+    const title = `${loaderData?.category.title || "Collection"} — By The Handful`;
+    const description = loaderData?.category.tagline ?? "Premium dry fruits and gift hampers.";
+    const url = `https://bythehandful.com/collections/${loaderData?.category.id}`;
+    // Per-collection OG image: drop a 1200×630 jpg at public/og/<id>.jpg to override.
+    const ogImage = `https://bythehandful.com/og-image.jpg`;
+
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+        { property: "og:type", content: "website" },
+        { property: "og:url", content: url },
+        { property: "og:site_name", content: "By The Handful" },
+        { property: "og:image", content: ogImage },
+        { property: "og:image:width", content: "1200" },
+        { property: "og:image:height", content: "630" },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: title },
+        { name: "twitter:description", content: description },
+        { name: "twitter:image", content: ogImage },
+      ],
+      links: [{ rel: "canonical", href: url }],
+    };
+  },
   component: CollectionPage,
 });
 
@@ -271,21 +292,76 @@ function CollectionPage() {
     setOpen(true);
   };
 
+  const productListSchema = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: category.title,
+    description: category.tagline,
+    numberOfItems: category.items.length,
+    itemListElement: category.items.map((item: Product, index: number) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      item: {
+        "@type": "Product",
+        name: item.name,
+        brand: { "@type": "Brand", name: "By The Handful" },
+        offers: {
+          "@type": "Offer",
+          priceCurrency: "INR",
+          price: item.price,
+          availability: "https://schema.org/InStock",
+          seller: { "@type": "Organization", name: "By The Handful" },
+        },
+      },
+    })),
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col selection:bg-amber/40 selection:text-ink">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productListSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              {
+                "@type": "ListItem",
+                position: 1,
+                name: "Home",
+                item: "https://bythehandful.com",
+              },
+              {
+                "@type": "ListItem",
+                position: 2,
+                name: category.title,
+                item: `https://bythehandful.com/collections/${category.id}`,
+              },
+            ],
+          }),
+        }}
+      />
       <Navbar />
 
       <main className="flex-1">
         {/* HEADER SECTION */}
         <section className="pt-8 pb-6 px-6 md:px-12 border-b border-secondary/20 bg-gradient-warm">
           <div className="max-w-7xl mx-auto text-center">
-            <div className="mb-4 inline-flex items-center gap-2 text-[10px] tracking-[0.25em] uppercase font-semibold text-foreground/50">
-              <Link to="/" className="hover:text-primary transition-colors">
-                Home
-              </Link>
-              <span>/</span>
-              <span>Collections</span>
-            </div>
+            <nav aria-label="Breadcrumb">
+              <ol className="mb-4 inline-flex items-center gap-2 text-[10px] tracking-[0.25em] uppercase font-semibold text-foreground/50">
+                <li>
+                  <Link to="/" className="hover:text-primary transition-colors">
+                    Home
+                  </Link>
+                </li>
+                <li aria-hidden="true">/</li>
+                <li aria-current="page">{category.title}</li>
+              </ol>
+            </nav>
             <h1 className="font-serif text-4xl md:text-5xl italic leading-tight text-ink mb-2">
               {category.title}
             </h1>

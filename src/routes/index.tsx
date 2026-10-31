@@ -24,7 +24,11 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "By The Handful — Sun-cured dry fruits & nuts" },
-      { name: "description", content: "Premium quality dry fruits, nuts, and hampers." },
+      {
+        name: "description",
+        content:
+          "Shop premium sun-cured dry fruits, exotic nuts, saffron & artisanal gift hampers from a 100-year heritage house. No sulfites, no added sugar — By The Handful.",
+      },
     ],
   }),
   component: Index,
@@ -444,9 +448,9 @@ function Index() {
           </div>
 
           <div className="mb-8">
-            <h3 className="font-serif text-3xl md:text-4xl italic text-foreground mb-8">
+            <h2 className="font-serif text-3xl md:text-4xl italic text-foreground mb-8">
               Luxury Hampers
-            </h3>
+            </h2>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-x-6 gap-y-12">
               {hamperCategories.map((category) => (
                 <a
@@ -479,9 +483,9 @@ function Index() {
           </div>
 
           <div className="mt-20">
-            <h3 className="font-serif text-3xl md:text-4xl italic text-foreground mb-8">
+            <h2 className="font-serif text-3xl md:text-4xl italic text-foreground mb-8">
               Premium Dry Fruits
-            </h3>
+            </h2>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-x-6 gap-y-12">
               {menuCategories.map((category) => (
                 <a
